@@ -1,0 +1,24 @@
+
+<%= error_messages_for "user" %>
+
+<table>
+  <tr>
+    <th>Password</th>
+    <td><%= password_field("user", "password") %></td>
+  </tr>
+
+  <tr>
+    <th>Password(confirm)</th>
+    <td><%= password_field("user", "password_confirmation") %></td>
+  </tr>
+</table>
+
+<table>
+<% names = @user.attribute_names(true) - ["objectClass", "userPassword"] -%>
+<% names.sort.each do |name| -%>
+  <tr>
+    <th><%= h name %></th>
+    <td><%= text_field("user", name) %></td>
+  </tr>
+<% end -%>
+</table>
