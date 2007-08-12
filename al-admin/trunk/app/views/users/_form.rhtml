@@ -3,12 +3,12 @@
 
 <table>
   <tr>
-    <th>Password</th>
+    <th><label for="user_password">Password</label></th>
     <td><%= password_field("user", "password") %></td>
   </tr>
 
   <tr>
-    <th>Password(confirm)</th>
+    <th><label for="user_password_confirmation">Confirm Password</label></th>
     <td><%= password_field("user", "password_confirmation") %></td>
   </tr>
 </table>
@@ -17,7 +17,7 @@
 <% names = @user.attribute_names(true) - ["objectClass", "userPassword"] -%>
 <% names.sort.each do |name| -%>
   <tr>
-    <th><%= h name %></th>
+    <th><label for="user_<%=h name %>"><%= h name %></label></th>
     <td><%= text_field("user", name) %></td>
   </tr>
 <% end -%>

@@ -2,7 +2,7 @@ require 'active_ldap/user_password'
 
 class LdapUser < ActiveLdap::Base
   ldap_mapping :prefix => "ou=Users",
-               :classes => ["posixAccount"],
+               :classes => ["person", "posixAccount"],
                :dn_attribute => "uid"
 
   attr_accessor :password

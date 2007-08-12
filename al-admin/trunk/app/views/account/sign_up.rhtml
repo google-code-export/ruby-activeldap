@@ -11,4 +11,12 @@
 <%= f.password_field :password_confirmation %></p>
 
 <p><%= submit_tag 'Sign up' %></p>
+
+<%   names = @user.attribute_names(true) - ["objectClass", "userPassword"] -%>
+<%   names.sort.each do |name| -%>
+<p><label for="<%= h name %>"><%= h name %><br />
+<%= f.text_field(name) %></p>
+<%   end -%>
+
+<p><%= submit_tag 'Sign up' %></p>
 <% end -%>

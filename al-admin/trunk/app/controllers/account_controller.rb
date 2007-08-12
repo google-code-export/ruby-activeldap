@@ -26,7 +26,7 @@ class AccountController < ApplicationController
     end
   end
 
-  def signup
+  def sign_up
     @user = LdapUser.new(params[:user])
     return unless request.post?
     if @user.save
