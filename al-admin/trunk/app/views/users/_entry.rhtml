@@ -1,11 +1,7 @@
 
 <div class="entry">
   <h2>
-    <%= link_to_if(defined?(link_to_entry) && link_to_entry,
-                   h(entry.dn), :action => "show", :id => entry) %>
-<% if current_user and current_user.ldap_user == entry -%>
-    (<%= link_to("Edit", :action => "edit", :id => entry) %>)
-<% end -%>
+    <%= user_link_if(defined?(link_to_entry) && link_to_entry, entry, true) %>
   </h2>
   <table>
 <% entry.attribute_names(true).sort.each do |name| -%>

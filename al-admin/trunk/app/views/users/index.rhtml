@@ -1,2 +1,9 @@
-<%= render(:partial => "entry", :collection => @users,
-                                :locals => {:link_to_entry => true}) %>
+<% if @users.empty? -%>
+<p>No user.</p>
+<% else -%>
+<ul>
+<%   @users.each do |user| -%>
+  <li><%= user_link(user, true) %></li>
+<%   end -%>
+</ul>
+<% end -%>
