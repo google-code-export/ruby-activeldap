@@ -4,6 +4,7 @@ class CreateUsers < ActiveRecord::Migration
       t.column :login,                     :string
       t.column :dn,                        :string
       t.column :updated_at,                :datetime
+      t.column :salt,                      :string
       t.column :remember_token,            :string
       t.column :remember_token_expires_at, :datetime
     end

@@ -1,19 +1,29 @@
 require 'digest/sha1'
+
 class User < ActiveRecord::Base
   validates_presence_of     :login
   validates_presence_of     :dn
   validates_uniqueness_of   :login, :dn, :case_sensitive => false
-  before_validation :find_dn
+  before_validation :generate_salt, :find_dn
 
-  # Authenticates a user by their login name and unencrypted password.  Returns the user or nil.
-  def self.authenticate(login, password)
-    u = find_by_login(login) # need to get the salt
-    if u.nil?
-      u = new
-      u.login = login
-      u = nil unless u.save
+  class << self
+    def authenticate(login, password)
+      u = find_by_login(login) # need to get the salt
+      if u.nil?
+        u = new
+        u.login = login
+        u = nil unless u.save
+      end
+      u && u.authenticated?(password) ? u : nil
     end
-    u && u.authenticated?(password) ? u : nil
+
+    def encrypt(password, salt)
+      Digest::SHA1.hexdigest("--#{salt}--#{password}--")
+    end
+  end
+
+  def encrypt(password)
+    self.class.encrypt(password, salt)
   end
 
   def authenticated?(password)
@@ -32,7 +42,7 @@ class User < ActiveRecord::Base
   # These create and unset the fields required for remembering users between browser closes
   def remember_me
     self.remember_token_expires_at = 2.weeks.from_now.utc
-    self.remember_token            = encrypt("#{email}--#{remember_token_expires_at}")
+    self.remember_token = encrypt("#{dn}--#{remember_token_expires_at}")
     save(false)
   end
 
@@ -45,6 +55,11 @@ class User < ActiveRecord::Base
   end
 
   private
+  def generate_salt
+    return unless new_record?
+    self.salt = Digest::SHA1.hexdigest("--#{Time.now.to_s}--#{login}--")
+  end
+
   def find_dn
     if login.blank?
       self.dn = nil

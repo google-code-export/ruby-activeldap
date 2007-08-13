@@ -25,7 +25,8 @@ class LdapUser < ActiveLdap::Base
   def authenticated?(password)
     establish_connection(:password => password)
     true
-  rescue ActiveLdap::AuthenticationError
+  rescue ActiveLdap::AuthenticationError,
+      ActiveLdap::LdapError::UnwillingToPerform
     false
   end
 

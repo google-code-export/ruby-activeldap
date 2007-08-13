@@ -1,5 +1,5 @@
 <% if @users.empty? -%>
-<p>No user.</p>
+<p><%= _("No user.") %></p>
 <% else -%>
 <ul>
 <%   @users.each do |user| -%>

@@ -20,9 +20,9 @@ class AccountController < ApplicationController
         }
       end
       redirect_back_or_default(top_url)
-      flash[:notice] = "Logged in successfully"
+      flash[:notice] = _("Logged in successfully")
     else
-      flash[:notice] = "Login or Password is incorrect"
+      flash[:notice] = _("Login or Password is incorrect")
     end
   end
 
@@ -34,7 +34,7 @@ class AccountController < ApplicationController
       unless @system_user.new_record?
         self.current_user = @system_user
         redirect_back_or_default(top_path)
-        flash[:notice] = "Thanks for signing up!"
+        flash[:notice] = _("Thanks for signing up!")
       end
     end
   end
@@ -43,7 +43,7 @@ class AccountController < ApplicationController
     current_user.forget_me if logged_in?
     cookies.delete :auth_token
     reset_session
-    flash[:notice] = "You have been logged out."
+    flash[:notice] = _("You have been logged out.")
     redirect_back_or_default(top_path)
   end
 end

@@ -6,7 +6,7 @@
   <table>
 <% entry.attribute_names(true).sort.each do |name| -%>
     <tr>
-      <th><%= h name %></th>
+      <th><%= h _(name) %></th>
       <td><%= h entry[name, true].join(", ") %></td>
     </tr>
 <% end -%>

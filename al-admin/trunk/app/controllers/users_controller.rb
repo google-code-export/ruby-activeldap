@@ -21,7 +21,7 @@ class UsersController < ApplicationController
       if previous_user_password != @user.user_password
         @user.establish_connection(:password => @user.password)
       end
-      flash[:notice] = 'User was successfully updated.'
+      flash[:notice] = _('User was successfully updated.')
       redirect_to :action => 'show', :id => @user
     else
       @user.password = @user.password_confirmation = nil
