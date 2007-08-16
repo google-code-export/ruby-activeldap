@@ -19,7 +19,7 @@ div.entry table
   margin-left: 3em;
 }
 
-div.entry table th
+div.entry table tbody th
 {
   text-align: left;
 }

@@ -20,5 +20,8 @@
     <p class="notice"><%=h flash[:notice] %></p>
 <% end -%>
     <%= yield %>
+
+    <hr />
+    <%= link_to(_("Top"), top_path) %>
   </body>
 </html>
