@@ -2,6 +2,8 @@ class UsersController < ApplicationController
   verify :method => :post, :only => [:update],
          :redirect_to => {:action => :index}
 
+  before_filter :login_required
+
   def index
     @users = find(:all)
   end

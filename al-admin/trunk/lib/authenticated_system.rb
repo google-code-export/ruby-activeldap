@@ -6,6 +6,13 @@ module AuthenticatedSystem
       current_user != :false
     end
     
+    def check_connectivity
+      if logged_in? and !current_user.connected?
+        self.current_user = :false
+      end
+      true
+    end
+
     # Accesses the current user from the session.
     def current_user
       @current_user ||= (session[:user] && User.find_by_id(session[:user])) || :false
@@ -108,7 +115,7 @@ module AuthenticatedSystem
           :value => current_user.remember_token,
           :expires => current_user.remember_token_expires_at
         }
-        flash[:notice] = _("Logged in successfully")
+        flash.now[:notice] = _("Logged in successfully")
       end
     end
 

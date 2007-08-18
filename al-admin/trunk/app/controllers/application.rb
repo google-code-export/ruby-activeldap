@@ -6,6 +6,7 @@ class ApplicationController < ActionController::Base
   session :session_key => '_al-admin_session_id'
 
   include AuthenticatedSystem
+  before_filter :check_connectivity
   before_filter :login_from_cookie
 
   init_gettext "al-admin"

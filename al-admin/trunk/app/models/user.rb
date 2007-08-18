@@ -35,10 +35,15 @@ class User < ActiveRecord::Base
     @ldap_user ||= LdapUser.find(dn)
   end
 
+  def connected?
+    ldap_user.connected?
+  end
+
   def remember_token?
     begin
-      remember_token_expires_at && Time.now.utc < remember_token_expires_at &&
-        ldap_user.connected?
+      remember_token_expires_at and
+        Time.now.utc < remember_token_expires_at and
+        connected?
     rescue ActiveLdap::EntryNotFound
       false
     end

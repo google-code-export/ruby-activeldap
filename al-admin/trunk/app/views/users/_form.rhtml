@@ -21,8 +21,9 @@
 <% names = @user.attribute_names(true) - ["objectClass", "userPassword"] -%>
 <% names.sort.each do |name| -%>
   <tr>
-    <th><label for="user_<%=h name %>"><%= h _(name) %></label></th>
+    <th><label for="user_<%=h name %>"><%= h la_(name) %></label></th>
     <td><%= text_field("user", name) %></td>
+    <td><%= h lad_(name) %></td>
   </tr>
 <% end -%>
 </table>
