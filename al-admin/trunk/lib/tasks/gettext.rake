@@ -15,7 +15,10 @@ namespace :gettext do
     desc "Update po/pot files (GetText)"
     task :update => "gettext:environment:setup" do
       require 'active_ldap/get_text/parser'
-      GetText::RGetText.add_parser(ActiveLdap::GetText::Parser.new)
+      options = {
+        # :extract_schema => true, # use this if you have any extra schema.
+      }
+      GetText::RGetText.add_parser(ActiveLdap::GetText::Parser.new(options))
 
       files = Dir.glob("{app,lib,components}/**/*.{rb,rhtml,rxml}")
       GetText.update_pofiles("al-admin", files,
