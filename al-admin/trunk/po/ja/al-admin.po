@@ -6,8 +6,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: AL Admin 0.0.1\n"
-"POT-Creation-Date: 2007-08-13 22:09+0900\n"
-"PO-Revision-Date: 2007-08-13 22:09+0900\n"
+"POT-Creation-Date: 2007-08-16 22:11+0900\n"
+"PO-Revision-Date: 2007-08-18 20:02+0900\n"
 "Last-Translator: Kouhei Sutou <kou@cozmixng.org>\n"
 "Language-Team: Japanese\n"
 "MIME-Version: 1.0\n"
@@ -27,33 +27,17 @@ msgstr "ログイン名またはパスワードが間違っています。"
 msgid "Thanks for signing up!"
 msgstr "登録ありがとうございます！"
 
-#: app/controllers/account_controller.rb:46
-msgid "You have been logged out."
-msgstr "ログアウトしました。"
-
 #: app/controllers/users_controller.rb:24
 msgid "User was successfully updated."
 msgstr "ユーザを正常に更新しました。"
-
-#: app/models/user.rb:-
-msgid "user"
-msgstr "ユーザ"
-
-#: app/models/user.rb:-
-msgid "User|Login"
-msgstr "ログイン名"
 
 #: app/models/user.rb:-
 msgid "User|Dn"
 msgstr "DN"
 
 #: app/models/user.rb:-
-msgid "User|Updated at"
-msgstr "更新時刻"
-
-#: app/models/user.rb:-
-msgid "User|Salt"
-msgstr "サルト"
+msgid "User|Login"
+msgstr "ログイン名"
 
 #: app/models/user.rb:-
 msgid "User|Remember token"
@@ -62,6 +46,30 @@ msgstr "記憶トークン"
 #: app/models/user.rb:-
 msgid "User|Remember token expires at"
 msgstr "記憶トークン失効時刻"
+
+#: app/models/user.rb:-
+msgid "User|Salt"
+msgstr "サルト"
+
+#: app/models/user.rb:-
+msgid "User|Updated at"
+msgstr "更新時刻"
+
+#: app/controllers/account_controller.rb:46
+msgid "You have been logged out."
+msgstr "ログアウトしました。"
+
+#: app/models/ldap_user.rb:-
+msgid "ldap user"
+msgstr "ユーザ"
+
+#: app/models/user.rb:-
+msgid "user"
+msgstr "ユーザ"
+
+#: app/views/layouts/application.rhtml:25
+msgid "Top"
+msgstr "トップ"
 
 #: app/views/account/login.rhtml:2 app/views/account/sign_up.rhtml:4
 msgid "Login"
@@ -96,6 +104,18 @@ msgstr "ユーザ一覧"
 #: app/views/welcome/index.rhtml:4
 msgid "Logout"
 msgstr "ログアウト"
+
+#: app/views/users/_entry.rhtml:9
+msgid "attribute name"
+msgstr "属性名"
+
+#: app/views/users/_entry.rhtml:10
+msgid "value"
+msgstr "値"
+
+#: app/views/users/_entry.rhtml:11
+msgid "description"
+msgstr "説明"
 
 #: app/views/users/index.rhtml:2
 msgid "No user."
