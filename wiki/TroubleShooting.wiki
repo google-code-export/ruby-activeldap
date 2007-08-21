@@ -1,4 +1,4 @@
-#summary The answers for frequently occurring problems
+#summary The answers to frequently occurring problems
 
 = `bind': can't convert Fixnum into String (TypeError) =
 
