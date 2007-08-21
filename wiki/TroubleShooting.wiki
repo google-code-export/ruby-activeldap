@@ -1,16 +1,20 @@
-#summary The answers for frequency occurred problems
+#summary The answers for frequently occurring problems
 
 = `bind': can't convert Fixnum into String (TypeError) =
 
-This error message may be returned when you use ActiveLdap with configuration file written in YAML. (e.g. ActiveLdap Rails plugin uses config/ldap.yml for that.)
+This error message may be returned when you use ActiveLdap with a configuration file written in YAML. (e.g. the ActiveLdap Rails plugin uses config/ldap.yml for that.)
 
-You will see the above message if you specify an all numeric password into your configuration file written in YAML:
+You will see the above message if you specify an all numeric password in your configuration file:
 
-  ...
+development:
+  host: 127.0.0.1
+  port: 389
+  base: dc=nodomain
+  bind_dn: cn=admin,dc=nodomain
   password: 123
-  ... 
+  ...
 
-In YAML, an all numeric value is converted number not string. But ActiveLdap requires a string for password value. So you need to specify a string not a number:
+In YAML, an all numeric value is converted to a number (Fixnum) and not to a String. But ActiveLdap requires a String for the password value. So you need to specify a String instead:
 
   ...
   password: "123"
