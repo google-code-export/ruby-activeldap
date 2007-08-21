@@ -6,6 +6,7 @@ This error message may be returned when you use ActiveLdap with a configuration 
 
 You will see the above message if you specify an all numeric password in your configuration file:
 
+{{{
 development:
   host: 127.0.0.1
   port: 389
@@ -13,12 +14,15 @@ development:
   bind_dn: cn=admin,dc=nodomain
   password: 123
   ...
+}}}
 
 In YAML, an all numeric value is converted to a number (Fixnum) and not to a String. But ActiveLdap requires a String for the password value. So you need to specify a String instead:
 
+{{{
   ...
   password: "123"
   ...
+}}}
 
 = Next problem... =
 
