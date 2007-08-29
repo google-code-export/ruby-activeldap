@@ -1,0 +1,52 @@
+body
+{
+  margin: 0.5em 1.5em;
+}
+
+table, tr, th, td
+{
+  border: 1px solid black;
+}
+
+p.notice
+{
+  color: green;
+}
+
+div.entry
+{
+  padding-bottom: 2em;
+  border-bottom: 1px solid black;
+}
+
+div.entry table
+{
+  margin-left: 3em;
+}
+
+div.entry table tbody th
+{
+  text-align: left;
+}
+
+div.object-class-information
+{
+  margin: 1em 5em;
+  padding: 0px 1em;
+}
+
+div.footer
+{
+  margin-top: 0.5em;
+  border-top: 1px solid gray;
+}
+
+div.footer div.links
+{
+  float: left;
+}
+
+div.system-info
+{
+  text-align: right;
+}
