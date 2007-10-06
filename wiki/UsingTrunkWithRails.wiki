@@ -9,8 +9,17 @@ If you want to try ActiveLdap on the edge with your Rails application, the follo
 {{{
 % rails sample
 % cd sample
-% script/plugin install http://ruby-activeldap.googlecode.com/svn/trunk
-% mv vendor/plugins/{trunk,active_ldap}
-% cd vendor/plugins/active_ldap
-% ln -s rails/plugin/active_ldap/init.rb ./
+% svn co http://ruby-activeldap.googlecode.com/svn/trunk vendor/activeldap-trunk
+% script/plugin install http://ruby-activeldap.googlecode.com/svn/trunk/rails/plugin/ative_ldap
+}}}
+
+Add vendor/activeldap-trunk/lib to config.load_paths in your config/environment.rb:
+{{{
+...
+Rails::Initializer.run do |config|
+  ...
+  config.load_paths += %W(#{RAILS_ROOT}/vendor/activeldap-trunk/lib)
+  ..
+end
+...
 }}}
