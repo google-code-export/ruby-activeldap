@@ -1,0 +1,341 @@
+# English translations for AL Admin package.
+# Copyright (C) 2007 Kouhei Sutou
+# This file is distributed under the same license as the AL Admin package.
+# Kouhei Sutou <kou@cozmixng.org>, 2007.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: AL Admin 0.9.0\n"
+"POT-Creation-Date: 2007-11-04 15:53+0900\n"
+"PO-Revision-Date: 2007-08-19 09:44+0900\n"
+"Last-Translator: Kouhei Sutou <kou@cozmixng.org>\n"
+"Language-Team: English\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: app/models/ldap_user.rb:8
+msgid "LdapUser|Password"
+msgstr ""
+
+#: app/models/ldap_user.rb:9
+msgid "LdapUser|Password confirmation"
+msgstr ""
+
+#: app/models/user.rb:-
+msgid "User|Dn"
+msgstr ""
+
+#: app/models/user.rb:-
+msgid "User|Login"
+msgstr ""
+
+#: app/models/user.rb:-
+msgid "User|Remember token"
+msgstr ""
+
+#: app/models/user.rb:-
+msgid "User|Remember token expires at"
+msgstr ""
+
+#: app/models/user.rb:-
+msgid "User|Salt"
+msgstr ""
+
+#: app/models/user.rb:-
+msgid "User|Updated at"
+msgstr ""
+
+#: app/models/entry.rb:21
+msgid "disable saving"
+msgstr ""
+
+#: app/models/entry.rb:-
+msgid "entry"
+msgstr ""
+
+#: app/models/ldap_user.rb:-
+msgid "ldap user"
+msgstr ""
+
+#: app/models/user.rb:-
+msgid "user"
+msgstr ""
+
+#: app/controllers/directory_controller.rb:31
+msgid "Populating is only for initialization"
+msgstr ""
+
+#: app/controllers/account_controller.rb:24 lib/authenticated_system.rb:112
+msgid "Logged in successfully"
+msgstr ""
+
+#: app/controllers/account_controller.rb:26
+msgid "Login or Password is incorrect"
+msgstr ""
+
+#: app/controllers/account_controller.rb:40
+msgid "Thanks for signing up!"
+msgstr ""
+
+#: app/controllers/account_controller.rb:47
+msgid "You have been logged out."
+msgstr ""
+
+#: app/controllers/users_controller.rb:27
+msgid "User was successfully updated."
+msgstr ""
+
+#: app/helpers/directory_helper.rb:5
+msgid "Failed to retrieve the entry"
+msgstr ""
+
+#: app/helpers/users_helper.rb:12
+msgid "Edit"
+msgstr ""
+
+#: app/views/directory/populate.rhtml:1
+msgid "Done."
+msgstr ""
+
+#: app/views/directory/populate.rhtml:2 app/views/object_classes/show.rhtml:37
+#: app/views/users/edit.rhtml:13 app/views/users/show.rhtml:9
+#: app/views/syntaxes/show.rhtml:20 app/views/attributes/show.rhtml:29
+msgid "Menu|Index"
+msgstr ""
+
+#: app/views/layouts/_header_menu.rhtml:5
+msgid "Menu|Logout"
+msgstr ""
+
+#: app/views/layouts/_header_menu.rhtml:7
+msgid "Menu|Login"
+msgstr ""
+
+#: app/views/layouts/_header_menu.rhtml:9
+msgid "Menu|Sign up"
+msgstr ""
+
+#: app/views/layouts/_main_menu.rhtml:6
+msgid "Menu|Users list"
+msgstr ""
+
+#: app/views/layouts/_main_menu.rhtml:7
+msgid "Menu|Directory"
+msgstr ""
+
+#: app/views/layouts/_main_menu.rhtml:8
+msgid "Menu|objectClass list"
+msgstr ""
+
+#: app/views/layouts/_main_menu.rhtml:9
+msgid "Menu|Attribute list"
+msgstr ""
+
+#: app/views/layouts/_main_menu.rhtml:10
+msgid "Menu|Syntax list"
+msgstr ""
+
+#: app/views/_entry/_attributes_information.rhtml:6
+#: app/views/attributes/_attributes.rhtml:5
+msgid "Attribute name"
+msgstr ""
+
+#: app/views/_entry/_attributes_information.rhtml:7
+msgid "Value"
+msgstr ""
+
+#: app/views/_entry/_attributes_information.rhtml:8
+#: app/views/object_classes/show.rhtml:6
+#: app/views/object_classes/_attributes.rhtml:11
+#: app/views/users/_object_classes_update_form.rhtml:12
+#: app/views/syntaxes/_syntaxes.rhtml:6 app/views/syntaxes/show.rhtml:6
+#: app/views/attributes/show.rhtml:6 app/views/attributes/_attributes.rhtml:6
+msgid "Description"
+msgstr ""
+
+#: app/views/_entry/_entry.rhtml:6
+msgid "objectClasses"
+msgstr ""
+
+#: app/views/_entry/_entry.rhtml:11
+msgid "Attributes"
+msgstr ""
+
+#: app/views/object_classes/_object_classes.rhtml:5
+#: app/views/users/_object_classes_update_form.rhtml:11
+msgid "objectClass name"
+msgstr ""
+
+#: app/views/object_classes/_object_classes.rhtml:6
+#: app/views/users/_attributes_update_form.rhtml:13
+msgid "description"
+msgstr ""
+
+#: app/views/object_classes/show.rhtml:13
+msgid "Super classes"
+msgstr ""
+
+#: app/views/object_classes/show.rhtml:15
+#: app/views/object_classes/_attributes.rhtml:4
+msgid "None"
+msgstr ""
+
+#: app/views/object_classes/show.rhtml:24
+msgid "Requeired attributes"
+msgstr ""
+
+#: app/views/object_classes/show.rhtml:30
+msgid "Optional attributes"
+msgstr ""
+
+#: app/views/object_classes/index.rhtml:1
+msgid "objectClass list"
+msgstr ""
+
+#: app/views/object_classes/_attributes.rhtml:9
+msgid "Name"
+msgstr ""
+
+#: app/views/object_classes/_attributes.rhtml:10
+msgid "Inherited"
+msgstr ""
+
+#: app/views/users/edit.rhtml:12
+msgid "Menu|Show"
+msgstr ""
+
+#: app/views/users/_form.rhtml:5 app/views/users/_form.rhtml:13
+msgid "Command|Update"
+msgstr ""
+
+#: app/views/users/_password_change_form.rhtml:2
+msgid "Change password"
+msgstr ""
+
+#: app/views/users/_password_change_form.rhtml:7
+#: app/views/account/sign_up.rhtml:7
+msgid "Password"
+msgstr ""
+
+#: app/views/users/_password_change_form.rhtml:15
+#: app/views/account/sign_up.rhtml:10
+msgid "Confirm Password"
+msgstr ""
+
+#: app/views/users/_object_classes_update_form.rhtml:6
+msgid "Update objectClasses"
+msgstr ""
+
+#: app/views/users/_object_classes_update_form.rhtml:10
+msgid "Use"
+msgstr ""
+
+#: app/views/users/index.rhtml:2
+msgid "No user."
+msgstr ""
+
+#: app/views/users/_attributes_update_form.rhtml:6
+msgid "Update attributes"
+msgstr ""
+
+#: app/views/users/_attributes_update_form.rhtml:11
+msgid "attribute name"
+msgstr ""
+
+#: app/views/users/_attributes_update_form.rhtml:12
+msgid "value"
+msgstr ""
+
+#: app/views/account/login.rhtml:5
+msgid "Login:"
+msgstr ""
+
+#: app/views/account/login.rhtml:10
+msgid "Password:"
+msgstr ""
+
+#: app/views/account/login.rhtml:16
+msgid "Remember me:"
+msgstr ""
+
+#: app/views/account/login.rhtml:22
+msgid "Log in"
+msgstr ""
+
+#: app/views/account/sign_up.rhtml:4
+msgid "Login"
+msgstr ""
+
+#: app/views/account/sign_up.rhtml:13 app/views/account/sign_up.rhtml:27
+msgid "Sign up"
+msgstr ""
+
+#: app/views/syntaxes/_syntaxes.rhtml:5
+msgid "Syntax name"
+msgstr ""
+
+#: app/views/syntaxes/show.rhtml:13 app/views/attributes/show.rhtml:22
+msgid "Detail"
+msgstr ""
+
+#: app/views/syntaxes/_detail.rhtml:4
+msgid "Binary tranfer required"
+msgstr ""
+
+#: app/views/syntaxes/_detail.rhtml:9
+msgid "Human readable"
+msgstr ""
+
+#: app/views/syntaxes/index.rhtml:1
+msgid "Syntax list"
+msgstr ""
+
+#: app/views/welcome/index.rhtml:4
+msgid "Menu|Populate"
+msgstr ""
+
+#: app/views/welcome/index.rhtml:6
+msgid "OK?"
+msgstr ""
+
+#: app/views/welcome/index.rhtml:8
+msgid "Welcome %s!"
+msgstr ""
+
+#: app/views/welcome/index.rhtml:12 lib/authenticated_system.rb:68
+msgid "Please login."
+msgstr ""
+
+#: app/views/attributes/show.rhtml:14
+msgid "Super attribute"
+msgstr ""
+
+#: app/views/attributes/_detail.rhtml:4
+msgid "Read only"
+msgstr ""
+
+#: app/views/attributes/_detail.rhtml:9
+msgid "Single value"
+msgstr ""
+
+#: app/views/attributes/_detail.rhtml:14
+msgid "Binary"
+msgstr ""
+
+#: app/views/attributes/_detail.rhtml:19
+msgid "Binary required"
+msgstr ""
+
+#: app/views/attributes/_detail.rhtml:24
+msgid "Syntax"
+msgstr ""
+
+#: app/views/attributes/index.rhtml:1
+msgid "Attribute list"
+msgstr ""
+
+#: app/views/_schema/_aliases.rhtml:2
+msgid "Aliases"
+msgstr ""

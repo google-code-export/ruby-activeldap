@@ -1,0 +1,26 @@
+<%# -*- javascript -*- %>
+var treeView = new TreeView(<%= tree_id.to_json %>,
+                            {
+                              move: false,
+                              emptyImg: true,
+                              open: true
+                            });
+
+treeView.addSelectItemCallback(function (element)
+{
+  var selectedNode = element.getElementsByClassName('node-dn')[0];
+  var selectedDN = selectedNode.childNodes[0].nodeValue;
+  var failureHandler = function(transport, json)
+  {
+    var message = <%= failed_to_retrieve_entry_message.to_json %> + "\n";
+    message += '<span class="dn">' + selectedDN + "</span>\n";
+    message = "<div class=\"entry\">\n" + message + "</div>";
+    $(<%= entry_id.to_json %>).update(message);
+  }
+
+  new Ajax.Updater({success: <%= entry_id.to_json %>},
+                   <%= url_for(:action => "entry").to_json %>,
+                   {parameters: {dn: selectedDN},
+                    evalScripts: true,
+                    onFailure: failureHandler});
+});
