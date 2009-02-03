@@ -24,6 +24,20 @@ In YAML, an all numeric value is converted to a number (Fixnum) and not to a Str
   ...
 }}}
 
+= How to connect to LDAPS server =
+
+Use the ":ssl" method in your configuration file:
+
+{{{
+production:
+  ...
+  port: 636
+  method: :ssl
+  ...
+}}}
+
+Note that "port: 636" is optional if you are using ActiveLdap >= 1.0.2 or trunk. In the version, ActiveLdap guesses suitable port number from "method" configuration.
+
 = Next problem... =
 
 The answer of this problem...
