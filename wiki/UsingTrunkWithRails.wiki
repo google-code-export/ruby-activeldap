@@ -2,24 +2,12 @@ How to use trunk with Rails
 
 = Introduction =
 
-If you want to try ActiveLdap on the edge with your Rails application, the following instructionis will help you.
+If you want to try ActiveLdap on the edge with your Rails application, the following instructions will help you.
 
 = Details =
 
 {{{
 % rails sample
 % cd sample
-% svn co http://ruby-activeldap.googlecode.com/svn/trunk vendor/activeldap-trunk
-}}}
-
-Add vendor/activeldap-trunk/lib to config.load_paths in your config/environment.rb:
-{{{
-...
-Rails::Initializer.run do |config|
-  ...
-  config.load_paths += %W(#{RAILS_ROOT}/vendor/activeldap-trunk/lib)
-  config.plugin_paths += %W(#{RAILS_ROOT}/vendor/activeldap-trunk/rails/plugin)
-  ...
-end
-...
+% svn co http://ruby-activeldap.googlecode.com/svn/trunk vendor/plugins/activeldap-trunk
 }}}
