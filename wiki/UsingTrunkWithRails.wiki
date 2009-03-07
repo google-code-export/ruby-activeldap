@@ -11,3 +11,18 @@ If you want to try ActiveLdap on the edge with your Rails application, the follo
 % cd sample
 % svn co http://ruby-activeldap.googlecode.com/svn/trunk vendor/plugins/activeldap-trunk
 }}}
+
+or
+
+{{{
+% rails sample
+% cd sample
+% script/plugin install http://ruby-activeldap.googlecode.com/svn/trunk
+% mv vendor/plugins/svn vendor/plugins/activeldap-trunk
+}}}
+
+Then create config/ldap.yml and edit it:
+
+{{{
+% script/generate scaffold_active_ldap
+}}}
