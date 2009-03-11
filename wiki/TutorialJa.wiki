@@ -30,4 +30,83 @@ user.uid_number = 1234
 user.save
 }}}
 
-(以下記述中…）
+= 準備 =
+Ruby/ActiveLdap を利用する前に動作条件を満たす必要があります。また環境に応じて使いやすいようにカスタマイズすることも可能です。
+
+== 動作条件 ==
+ * Ruby 1.8.x
+ * Ruby/LDAP
+ * (Optional) Ruby/LDAP+GSSAPI
+ * Ruby/LDAP と互換性のある LDAP サーバ：OpenLDAP その他
+  * 利用する LDAP サーバはスキーマクエリのために root_dse クエリを許可していなければなりません
+ * コード例を動作させるには Ruby/Password が必要です
+
+== インストール ==
+インストールは gem を利用して可能です。
+{{{
+  gem install active_ldap
+}}}
+
+== カスタマイズ ==
+Ruby/ActiveLdap はインストールされ動作可能です。もう少し便利にプログラミングするためのカスタマイズが可能です。
+
+あなたのLDAP上のユーザ/グループアカウントを管理するために Ruby プログラミングをするとしましょう。このドキュメントのコード例はそれを想定して記載していきます。
+
+利便性のために、`ldapadmin'　ディレクトリを作成することをお勧めします。この下には lib ディレクトリを作成する必要があります。
+{{{
+  $ cd ~
+  $ mkdir -p ldapadmin/lib
+  $ cd ldapadmin/lib
+}}}
+
+lib ディレクトリは私たちがカスタマイズを行う場所です。もちろん、この場所はすべての Ruby スクリプトがアクセスできるように Ruby のデフォルトサーチパスに変更することもできます。私のおしゃべりはもういいでしょう。あなたが lib/ ディレクトリに何を置くのか知りたがっているのもわかっています。
+
+わたしたちはここに拡張クラスを配置します。拡張クラスが何かというと…
+
+= 利用法 =
+
+この章では Ruby/ActiveLdap を利用して拡張クラスをコーディングし、アプリケーションを記述し、それらを利用するまでを記載します。
+
+何を得られるかざっくりつかむために、irb を利用して簡単な例を紹介しましょう。
+{{{
+  irb> require 'active_ldap'
+}}}
+
+ここでは Ldap Group に拡張クラスをマッピングします。
+<wiki:comment>
+  Here's an extension class that maps to the LDAP Group objects:
+</wiki:comment>
+
+{{{
+  irb> class Group < ActiveLdap::Base
+  irb* ldap_mapping
+  irb* end
+}}}
+
+<wiki:comment>
+  Here is the Group class in use:
+</wiki:comment>
+こうすると、グループクラスはこのように利用できます
+{{{
+  irb> all_groups = Group.find(:all, '*').collect {|group| group.cn}
+  => ["root", "daemon", "bin", "sys", "adm", "tty", ..., "develop"]
+
+  irb> group = Group.find("develop")
+  => #<Group:0x..........>
+
+  irb> group.members.collect {|member| member.uid}
+  => ["drewry"]
+
+  irb> group.cn
+  => "develop"
+
+  irb> group.gid_number
+  => "1003"
+}}}
+
+<wiki:comment>
+That's it! No let's get back in to it. 
+</wiki:comment>
+ほら！ もう元には戻れないでしょう？
+
+(以下記述中…
