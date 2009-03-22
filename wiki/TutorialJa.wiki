@@ -12,14 +12,20 @@
   that. Inspired by ActiveRecord, Ruby/ActiveLdap provides an object
   oriented interface to LDAP entries. 
 </wiki:comment>
-Ruby/ActiveLdap は LDAP を操作する今までにない方法です。大半のLDAP操作は難しいLDIFを扱うか、ウェブインターフェースを利用するか、説明を省かれたリファレンスマニュアルを参照しながら、難解なAPI利用しなければなりませんでした。
-Ruby/ActiveLdap はこの解決を目指します。Rub/ActiveRecord によって着想し、Ruby/ActiveLdap は LDAP エントリーに対するオブジェクト指向のインターフェースを提供します。
+Ruby/ActiveLdap は LDAP を操作する今までにない方法です。大半のLDAP操作は難しい
+LDIFを扱うか、ウェブインターフェースを利用するか、説明を省かれたリファレンスマ
+ニュアルを参照しながら、難解なAPI利用しなければなりませんでした。
+
+Ruby/ActiveLdap はこの解決を目指します。Rub/ActiveRecord によって着想し、
+Ruby/ActiveLdap は LDAP エントリーに対するオブジェクト指向のインターフェースを提
+供します。
 
 <wiki:comment>
   The target audience is system administrators and LDAP users everywhere
   that need quick, clean access to LDAP in Ruby. 
 </wiki:comment>
-ターゲットとしている読み手は、システム管理者やLDAPユーザであって、手軽かつきれいなLDAPアクセスの方法を求めるすべての人です。
+ターゲットとしている読み手は、システム管理者やLDAPユーザであって、手軽かつきれい
+なLDAPアクセスの方法を求めるすべての人です。
 
 <wiki:comment>
   What's LDAP?
@@ -37,7 +43,13 @@ Ruby/ActiveLdap はこの解決を目指します。Rub/ActiveRecord によっ�
     (Unfortunately, I've yet to try this against Microsoft's
     ActiveDirectory, despite what the name implies.) 
 </wiki:comment>
-LDAPは”軽量ディレクトリアクセスプロトコル”のことです。これは基本的にLDAPサーバと対話するためのプロトコルを意味します。LDAPサーバは軽量のディレクトリサーバです。LDAPサーバはシンプルな電話帳から、コンピュータ上のユーザアカウントまで、なんでも格納することができ、たいていの場合後者のために使われます。このテキストでの例は、LDAPを Unix 系システムのための中央認証・認可サーバとして利用することを熟知しているものと仮定します（残念なことに、その名前に含まれているにも関わらず私はまだ Micrsoft ActiveDirectory に対してこれを試みていません）
+LDAPは”軽量ディレクトリアクセスプロトコル”のことです。これは基本的にLDAPサーバ
+と対話するためのプロトコルを意味します。LDAPサーバは軽量のディレクトリサーバで
+す。LDAPサーバはシンプルな電話帳から、コンピュータ上のユーザアカウントまで、なん
+でも格納することができ、たいていの場合後者のために使われます。このテキストでの例
+は、LDAPを Unix 系システムのための中央認証・認可サーバとして利用することを熟知し
+ているものと仮定します（残念なことに、その名前に含まれているにも関わらず私はまだ
+Micrsoft ActiveDirectory に対してこれを試みていません）
 
 <wiki:comment>
   Further reading:
@@ -250,25 +262,24 @@ That's it! No let's get back in to it.
 <wiki:comment>
   Extension Classes
 </wiki:comment>
-== 拡張クラス ==
+== Ruby/ActiveLdap 拡張クラス ==
 <wiki:comment>
   Extension classes are classes that are subclassed from ActiveLdap::Base. They are used to represent objects in your LDAP server abstractly.
-</wiki:comment>
-拡張クラスは ActiveLdap::Base のサブクラスです。これらは LDAP サーバのデータを抽象化して提供します。
 
-<wiki:comment>
   Why do I need them?
-</wiki:comment>
-== なぜこれらが必要か ==
 
-<wiki:comment>
   Extension classes are what make Ruby/ActiveLdap "active"! They do all the
   background work to make easy-to-use objects by mapping the LDAP object's
   attributes on to a Ruby class.  
 </wiki:comment>
-拡張クラスは Ruby/ActiveLdap を有効にするために必要です。ActiveLdapBase を継承し
-たクラスは、プログラマの利便性のために LDAP オブジェクトの属性情報を Ruby クラス
-にマッピングします。これは自動で行われます。
+
+Ruby/ActiveLdap 拡張クラスは ActiveLdap::Base のサブクラスです。これらは LDAPオ
+ブジェクトを抽象化し、Rubyオブジェクトとして利用するためのインターフェースを提供
+します。
+
+ActiveLdap::Base を継承したクラスは、プログラマの利便性のために LDAP オブジェク
+トの属性情報を(ActiveRecordのように) Ruby クラスにマッピングします。これは自動で
+行われます。
 
 <wiki:comment>
   Special Methods
@@ -371,13 +382,40 @@ cn から始まるものとして扱われます。
   application choose what objectClasses their objects should have by calling the
   method e.g. Group#add_class(*values).
 </wiki:comment>
+:classes は Ruby/ActiveLdap に対して、新しいオブジェクトを生成するのに必要な最低
+条件を指示します。LDAP はオブジェクトクラスを利用して、LDAPオブジェクトがどのよ
+うな属性を持ち得るかを定義します。Ruby/ActiveLdap はこれを :classes 引数によって
+知ることになります。デフォルトは 'top' のみです。このままにすることもできます
+し、add_class メソッドなどによって追加することも可能です。
 
-Note that is can be very important to define the default :classes value. Due to implementation choices with most LDAP servers, once an object is created, its structural objectclasses may not be removed (or replaced). Setting a sane default may help avoid programmer error later.
+<wiki:comment>
+  Note that is can be very important to define the default :classes value. Due
+  to implementation choices with most LDAP servers, once an object is created,
+  its structural objectclasses may not be removed (or replaced). Setting a sane
+  default may help avoid programmer error later.
+</wiki:comment>
+デフォルトの :classess の値はとても重要です。ほとんどの LDAP サーバは一度オブジ
+ェクトが造られると structual な objectClass は削除（または変更）されることはない
+でしょう。健全なデフォルトを設定しておくことは、後々バグを作り込むことを回避する
+助けになるかもしれません。
 
-:classes isn't the only optional argument. If :dn_attribute is left off, it defaults to underscored class name or 'cn’. If :prefix is left off, it will default to 'ou=PLURALIZED_CLASSNAME’. In this case, it would be 'ou=Groups’.
+<wiki:comment>
+  :classes isn't the only optional argument. If :dn_attribute is left off, it
+  defaults to underscored class name or 'cn’. If :prefix is left off, it will
+  default to 'ou=PLURALIZED_CLASSNAME’. In this case, it would be 'ou=Groups’.
+</wiki:comment>
+:classes だけがオプションの引数ではありません。もし :dn_attribute が無い場合、こ
+のデフォルトはクラス名を underscore したもの（すなわち、クラス名がTheClassの場合
+は"the_class"）か、cn に設定されます。
 
-:classes should be an Array. :dn_attribute should be a String and so should :prefix.
-belongs_to
+<wiki:comment>
+  :classes should be an Array. :dn_attribute should be a String and so should
+  :prefix.
+</wiki:comment>
+:classes は配列でなくてはなりません。:dn_attribute と :prefix は文字列である必要
+があります。
+
+=== belongs_to ===
 
 This method allows an extension class to make use of other extension classes tying objects together across the LDAP tree. Often, user objects will be members of, or belong_to, Group objects.
 
