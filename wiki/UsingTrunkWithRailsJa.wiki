@@ -1,0 +1,37 @@
+# RailsでActiveLdapを使う方法
+
+= はじめに =
+
+ActiveLdapは活発に開発されていて、最新リリースにある問題がtrunk（最先端のソースツリー）では修正されていることもあります。例えば、ActiveLdap 1.0.2はRails 2.3.2に対応していませんが、trunkではRails 2.3.2に対応しています。（2009/3/24現在）
+
+ここでは、RailsアプリケーションでActiveLdapのtrunkを使う方法を説明します。
+
+= やり方 =
+
+以下の2つのどちらかのやり方でActiveLdapのtrunkをRailsアプリケーションに取り込みます。
+
+チェックアウト:
+{{{
+% rails sample
+% cd sample
+% svn co http://ruby-activeldap.googlecode.com/svn/trunk vendor/plugins/activeldap-trunk
+}}}
+
+プラグイン:
+{{{
+% rails sample
+% cd sample
+% script/plugin install http://ruby-activeldap.googlecode.com/svn/trunk
+% mv vendor/plugins/svn vendor/plugins/activeldap-trunk
+}}}
+
+チェックアウト方式は、trunkに追従するのに便利です。バージョン管理システムでsvnを使っているときはsvn:externalsを使うこともできます。
+
+プラグイン方式は、取り込んだActiveLdapをバージョン管理システムにも入れるときに便利です。バージョン管理システムとしてgitを使っているときは、こちらの方が便利でしょう。
+
+
+ActiveLdapのtrunkを取り込んだら、config/ldap.ymlを作成します。以下のようにscaffold_active_ldapジェネレータで雛形を生成することができます。
+
+{{{
+% script/generate scaffold_active_ldap
+}}}
