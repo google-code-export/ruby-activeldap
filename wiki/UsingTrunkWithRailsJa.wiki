@@ -1,4 +1,4 @@
-# RailsでActiveLdapを使う方法
+# RailsでActiveLdapのtrunkを使う方法
 
 = はじめに =
 
