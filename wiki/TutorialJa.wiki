@@ -407,31 +407,61 @@ DN はcn から始まるものとして扱われます。
 
 === belongs_to ===
 
-This method allows an extension class to make use of other extension classes
-tying objects together across the LDAP tree. Often, user objects will be
-members of, or belong_to, Group objects.
+<wiki:comment>
+  This method allows an extension class to make use of other extension classes
+  tying objects together across the LDAP tree. Often, user objects will be
+  members of, or belong_to, Group objects.
+</wiki:comment>
+このメソッドはLDAPツリーを横断して、他の拡張クラスとの紐づけを行います。しばし
+ば、User オブジェクトはGroupオブジェクトのメンバとなり、belongs_to を利用して紐
+づけられます。
 
+{{{
   * dc=dataspill,dc=org
   |+ ou=People,dc=dataspill,dc=org
     #    |- uid=drewry,ou=People,dc=dataspill,dc=org
   |- ou=Groups,dc=dataspill,dc=org
+}}}
 
-In the above tree, one such example would be user 'drewry’ who is a part of the group 'develop’. You can see this by looking at the 'memberUid’ field of 'develop’.
+<wiki:comment>
+  In the above tree, one such example would be user 'drewry’ who is a part of
+  the group 'develop’. You can see this by looking at the 'memberUid’ field of
+  'develop’.
+</wiki:comment>
+上記のようなLDAPツリーでは、'drewry'ユーザは　'develo' グループの一員であるとし
+ます。この場合、'develop' グループの 'memberUid' フィールドを見ることで、それを
+確認できます。
 
+{{{
   irb> develop = Group.find('develop')
   => ...
   irb> develop.memberUid
   => ['drewry', 'builder']
+}}}
 
-If we look at the LDAP entry for 'drewry’, we do not see any references to group 'develop’. In order to remedy that, we can use belongs_to
+<wiki:comment>
+  If we look at the LDAP entry for 'drewry’, we do not see any references to
+  group 'develop’. In order to remedy that, we can use belongs_to
+</wiki:comment>
+しかしながら、私たちが 'drewry' のエントリを見た時に、'develop' グループと関連付
+けられていることは確認できないでしょう。これを解決するために belongs_to を利用し
+ます。
 
+{{{
   irb> class User < ActiveLdap::Base
   irb*   ldap_mapping :dn_attribute => 'uid', :prefix => 'People', :classes => ['top','account']
   irb*   belongs_to :groups, :class => 'Group', :many => 'memberUid', :foreign_key => 'uid'
   irb* end
+}}}
 
-Now, class User will have a method called 'groups’ which will retrieve all Group objects that a user is in.
+<wiki:comment>
+  Now, class User will have a method called 'groups’ which will retrieve all
+  Group objects that a user is in.
+</wiki:comment>
+これで User クラスは 'groups' メソッドを利用できるようになります。このメソッドは
+ユーザが所属するすべての Group オブジェクトを取得することができます。
 
+{{{
   irb> me = User.find('drewry')
   irb> me.groups
   => [#<Group:0x000001 ...>, #<Group:0x000002 ...>, ...]
@@ -440,29 +470,81 @@ Now, class User will have a method called 'groups’ which will retrieve all Gro
   "audio"
   "develop"
   => nil
-  (Note: nil is just there to make the output cleaner...)
+  (注:irb 上の見やすさのために nil を返すようにしています)
+}}}
 
-TIP: If you weren't sure what the distinguished name attribute was for Group, you could also do the following:
+<wiki:comment>
+  TIP: If you weren't sure what the distinguished name attribute was for Group,
+  you could also do the following:
+</wiki:comment>
+TIP: 上記では Group の Distinguished name が cn であると仮定しています。もし
+Group の Distinguished name の属性名を知らなければ、以下のようにすれば
+（Distinguished name がなんであれ）Distinguished name の属性を取得できます。
 
+{{{
   irb> me.groups.each { |group| p group.id };nil
   "cdrom"
   "audio"
   "develop"
   => nil
+}}}
 
-Now let's talk about the arguments. The first argument is the name of the method you wish to create. In this case, we created a method called groups using the symbol :groups. The next collection of arguments are actually a Hash (as with ldap_mapping). :class should be a string that has the name of a class you've already included. If you class is inside of a module, be sure to put the whole name, e.g. :class => "MyLdapModule::Group". :primary_key tells belongs_to what attribute Group objects have that match the :many. :many is the name of the local attribute whose value should be looked up in Group under the primary key. If :foreign_key is left off of the argument list, it is assumed to be the dn_attribute. With this in mind, the above definition could become:
+<wiki:comment>
+  Now let's talk about the arguments. The first argument is the name of the
+  method you wish to create. In this case, we created a method called groups
+  using the symbol :groups. The next collection of arguments are actually a Hash
+  (as with ldap_mapping). :class should be a string that has the name of a class
+  you've already included. If you class is inside of a module, be sure to put
+  the whole name, e.g. :class => "MyLdapModule::Group". :primary_key tells
+  belongs_to what attribute Group objects have that match the :many. :many is
+  the name of the local attribute whose value should be looked up in Group under
+  the primary key. If :foreign_key is left off of the argument list, it is
+  assumed to be the dn_attribute. With this in mind, the above definition could
+  become:
+</wiki:comment>
+belongs_to の引数について説明します。
 
+最初の引数は造りたいメソッドの名前を指定します。この例ではシンボル :groups を指
+定することによって groups メソッドが作成されました。次以降の引数は実際には Hash
+です（ldap_mapping のように）。
+
+:class キーは所属先のLDAPエントリのクラス名を String で指定します（この例の場合、
+User のインスタンスが所属するのは Group クラスのインスタンスとなるため、'Group'
+と指定します）。もし拡張クラスが Ruby におけるモジュールやクラスの中に定義されてい
+る場合、:class => "MyLdapModule::Group" のようにトップレベルから全ての名前を記載
+してください。
+
+:foreign_key は所属する側のLDAPオブジェクトの属性名を指定します。ここに設定した
+属性名が、所属のキーとなります。:foreign_key に何も設定しないと、自動的に:
+dn_attributeにした属性名が利用されます。
+
+:many は所属先が複数のLDAPオブジェクトにわたる場合に利用します。:foreign_key に
+指定した属性に対応する、所属先のLDAPエントリの属性名を設定します。上記の例では
+:foreign_key に uid、:many に memberUid といった具合です。（訳注：RDBでの外部
+キーと考えると混乱するかもしれません。こういったものだと考えてください）
+
+:primary_key は所属先がただひとつのLDAPオブジェクトである場合に利用します。
+gidNumber に指定するような、プライマリの所属グループなどがこれに該当するでしょ
+う。
+
+{{{
   irb> class User < ActiveLdap::Base
   irb*   ldap_mapping :dn_attribute => 'uid', :prefix => 'People', :classes => ['top','account']
   irb*   belongs_to :groups, :class => 'Group', :many => 'memberUid'
   irb* end
+}}}
 
-In addition, you can do simple membership tests by doing the following:
+<wiki:comment>
+  In addition, you can do simple membership tests by doing the following:
+</wiki:comment>
+加えて、メンバーシップテストも下記のように実施できます。
 
+{{{
   irb> me.groups.member? 'root'
   => false
   irb> me.groups.member? 'develop'
   => true
+}}}
 
 has_many
 
