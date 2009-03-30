@@ -94,17 +94,15 @@ ActiveLdap を利用する前に動作条件を満たす必要があります。
 
 <wiki:comment>
   Requirements
-      * Ruby 1.8.x
-      * Ruby/LDAP
-      * (Optional) Ruby/LDAP+GSSAPI
-      * An LDAP server compatible with Ruby/LDAP: OpenLDAP, etc
+      * A Ruby implementation: Ruby 1.8.x, 1.9.1 or JRuby 1.1
+      * A LDAP library: Ruby/LDAP (for Ruby), Net::LDAP (for Ruby or JRuby) or JNDI (for JRuby)
+      * A LDAP server: OpenLDAP, etc
             o Your LDAP server must allow root_dse queries to allow for schema queries
 </wiki:comment>
 == 動作条件 ==
- * Ruby 1.8.x
- * Ruby/LDAP
- * (Optional) Ruby/LDAP+GSSAPI
- * Ruby/LDAP と互換性のある LDAP サーバ：OpenLDAP その他
+ * Ruby実装: Ruby 1.8.x または 1.9.1 または JRuby 1.1
+ * LDAPライブラリ: Ruby/LDAP (Ruby の場合) または Net::LDAP (Ruby か JRuby の場合) または JNDI (JRuby の場合)
+ * LDAP サーバ: OpenLDAP など
   * 利用する LDAP サーバはスキーマクエリのために root_dse クエリを許可していなければなりません
 
 <wiki:comment>
