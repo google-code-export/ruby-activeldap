@@ -199,7 +199,10 @@ Just to give a taste of what's to come, here is a quick example using irb:
   irb> require 'active_ldap'
 }}}
 
-LDAPサーバとの接続を確立します。ここでは最も基本的なメソッドである setup_connection を利用します。サンプルとして、接続先は localhost、base を "dc=dataspill,dc=org" とします。
+LDAPサーバとの接続を確立します。ここでは最も基本的なメソッドである
+setup_connection を利用します。サンプルとして、接続先は localhost、base を
+"dc=dataspill,dc=org" とします。
+
 {{{
   ActiveLdap::Base.setup_connection :host => 'localhost', :base => 'dc=dataspill,dc=org'
 }}}
@@ -542,49 +545,148 @@ gidNumber に指定するような、プライマリの所属グループなど�
   => true
 }}}
 
-has_many
+=== has_many ===
 
-This method is the opposite of belongs_to. Instead of checking other objects in other parts of the LDAP tree to see if you belong to them, you have multiple objects from other trees listed in your object. To show this, we can just invert the example from above:
+<wiki:comment>
+  This method is the opposite of belongs_to. Instead of checking other objects
+  in other parts of the LDAP tree to see if you belong to them, you have
+  multiple objects from other trees listed in your object. To show this, we can
+  just invert the example from above:
+</wiki:comment>
+このメソッドは belongs_to と対のものです。特定のオブジェクトに所属しているエント
+リを、所属されているオブジェクトからリスト可能にします。これを行うにはbelongs_to
+とは逆のことをします。
 
+{{{
   class Group < ActiveLdap::Base
     ldap_mapping :dn_attribute => 'cn', :prefix => 'ou=Groups', :classes => ['top', 'posixGroup']
     has_many :members, :class => "User", :wrap => "memberUid", :primary_key => 'uid'
   end
+}}}
 
-Now we can see that group develop has user 'drewry’ as a member, and it can even return all responses in object form just like belongs_to methods.
+<wiki:comment>
+  Now we can see that group develop has user 'drewry’ as a member, and it can
+  even return all responses in object form just like belongs_to methods.
+</wiki:comment>
+これで develop グループが 'drewry' ユーザをメンバーとして見ることができます。そ
+して belongs_to のようにメンバーのリストを members メソッドによって取得すること
+ができます。
 
+{{{
   irb> develop = Group.find('develop')
   => ...
   irb> develop.members
   => [#<User:0x000001 ...>, #<User:...>]
+}}}
 
-The arguments for has_many follow the exact same idea that belongs_to's arguments followed. :wrap's contents are used to search for matching :primary_key content. If :primary_key is not specified, it defaults to the dn_attribute of the specified :class.
-Using these new classes
+<wiki:comment>
+  The arguments for has_many follow the exact same idea that belongs_to's
+  arguments followed. :wrap's contents are used to search for matching
+  :primary_key content. If :primary_key is not specified, it defaults to the
+  dn_attribute of the specified :class.  
+</wiki:comment>
+has_many の引数は belongs_to とまったく同じ形式をとります。つまり第一引数に実装
+するメソッド名を Symbol で渡し、続く引数は Hash です。
 
-These new classes have many method calls. Many of them are automatically generated to provide access to the LDAP object's attributes. Other were defined during class creation by special methods like belongs_to. There are a few other methods that do not fall in to these categories.
-.find
+:class も同様です。この拡張クラスのインスタンスに所属するオブジェクトのクラス名
+を Stringで記載します。
 
-.find is a class method that is accessible from any subclass of Base that has 'ldap_mapping’ called. When called it returns the first match of the given class.
+:wrap の内容は :primary_key の内容を検索するために使われます。:primary_key は所
+属するオブジェクトを探すためのキーとする属性名です。:class の:primary_key が
+:wrap の内容で検索され、マッチしたものがリストされます。
+:primary_key が指定されない場合、:class に指定されたクラスの :dn_attribute が利
+用されます。
+
+<wiki:comment>
+  Using these new classes
+</wiki:comment>
+== 拡張クラスの利用法 ==
+
+<wiki:comment>
+  These new classes have many method calls. Many of them are automatically
+  generated to provide access to the LDAP object's attributes. Other were
+  defined during class creation by special methods like belongs_to. There are a
+  few other methods that do not fall in to these categories.  
+</wiki:comment>
+作成した拡張クラスは多くのメソッドコールを持ちます。それらのうちの多数は LDAP
+オブジェクトに対するアクセスを提供するために自動的に作成されています。他のメソッ
+ドはクラス定義時、belongs_to のような特別なメソッドによって作成されます。以下で
+はそれら以外のメソッドについて記載します。
+
+=== .find ===
+
+<wiki:comment>
+  * obsolete *
+  .find is a class method that is accessible from any subclass of Base that has
+  'ldap_mapping’ called. When called it returns the first match of the given
+  class.
 
   irb> Group.find('*').cn
   => "root"
 
-In this simple example, Group.find took the search string of 'deve*’ and searched for the first match in Group where the dn_attribute matched the query. This is the simplest example of .find.
+  In this simple example, Group.find took the search string of 'deve*’ and
+  searched for the first match in Group where the dn_attribute matched the
+  query. This is the simplest example of .find.
+</wiki:comment>
+.find は ldap_mapping をコール済みの拡張クラスのクラスメソッドです。ActiveRecord
+のようにLDAPエントリを検索可能です。
 
-  irb> Group.find(:all, '*').collect {|group| group.cn}
-  => ["root", "daemon", "bin", "sys", "adm", "tty", ..., "develop"]
+文字列を与えると、dn_attribute をキーにして最初にマッチするオブジェクトを返しま
+す。
+{{{
+  irb> Group.find('develop')
+  => #<Group ...>
+  irb> Group.find('develop').cn
+  => "develop"
+  irb> Group.find('develo').members
+  => ['drewry']
+}}}
 
-Here .find(:all) returns all matches to the same query. Both .find and .find(:all) also can take more expressive arguments:
+<wiki:comment>
+  * obsolete *
+    irb> Group.find(:all, '*').collect {|group| group.cn} => ["root", "daemon",
+    "bin", "sys", "adm", "tty", ..., "develop"]
+
+  Here .find(:all) returns all matches to the same query. Both .find and
+  .find(:all) also can take more expressive arguments:
 
   irb> Group.find(:all, :attribute => 'gidNumber', :value => '1003').collect {|group| group.cn}
   => ["develop"]
+</wiki:comment>
 
-So it is pretty clear what :attribute and :value do - they are used to query as :attribute=:value.
+最初のキーに :all を与えると全てのオブジェクトを返します。
+{{{
+  irb> Group.find :all
+  => [#<Group ...>, #<Group ...>, #<Group ...>] 
+  irb> Group.find :all, :filter => '(gidNumber=2*)'
+  => [#<Group ...>, #<Group ...>] 
+}}}
 
-If :attribute is unspecified, it defaults to the dn_attribute.
+<wiki:comment>
+  So it is pretty clear what :attribute and :value do - they are used to query
+  as :attribute=:value.
 
-It is also possible to override :attribute and :value by specifying :filter. This argument allows the direct specification of a LDAP filter to retrieve objects by.
-.search
+  If :attribute is unspecified, it defaults to the dn_attribute.
+</wiki:comment>
+:attribute と :value によって特定のキーについて検索することも可能です。
+:attribute が指定されない場合、:dn_attribute が利用されます。
+{{{
+  irb> Group.find(:all, :attribute => 'gidNumber', :value '1003').collect{|g| g.cn}
+  => ["develop"]
+}}}
+
+<wiki:comment>
+  It is also possible to override :attribute and :value by specifying :filter.
+  This argument allows the direct specification of a LDAP filter to retrieve
+  objects by.  
+</wiki:comment>
+:filter によってLDAPフィルタを直接指定することも可能です。
+{{{
+  irb> Group.find(:all, :filter => '(gidNumber=1003)').collect{|g| g.cn}
+  => ["develop"]
+}}}
+
+=== .search ===
 
 .search is a class method that is accessible from any subclass of Base, and Base. It lets the user perform an arbitrary search against the current LDAP connection irrespetive of LDAP mapping data. This is meant to be useful as a utility method to cover 80% of the cases where a user would want to use Base.connection directly.
 
