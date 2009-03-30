@@ -14,7 +14,7 @@
 </wiki:comment>
 ActiveLdap は LDAP を操作する今までにない方法です。大半のLDAP操作は難しい
 LDIFを扱うか、ウェブインターフェースを利用するか、説明を省かれたリファレンスマ
-ニュアルを参照しながら、難解なAPI利用しなければなりませんでした。
+ニュアルを参照しながら、難解なAPIを利用しなければなりませんでした。
 
 ActiveLdap はこの解決を目指します。ActiveRecord によって着想し、
 ActiveLdap は LDAP エントリーに対するオブジェクト指向のインターフェースを提
@@ -58,7 +58,7 @@ Micrsoft ActiveDirectory に対してこれを試みていません）
 </wiki:comment>
 より理解するために：
   * RFC1777 - 軽量ディレクトリアクセスプロトコル
-  * OpenLdAP
+  * OpenLDAP
 
 <wiki:comment>
   So why use ActiveLdap?
