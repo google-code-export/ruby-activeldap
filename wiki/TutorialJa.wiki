@@ -6,18 +6,18 @@
 = はじめに =
 
 <wiki:comment>
-  Ruby/ActiveLdap is a novel way of interacting with LDAP. Most interaction
+  ActiveLdap is a novel way of interacting with LDAP. Most interaction
   with LDAP is done using clunky LDIFs, web interfaces, or with painful APIs
-  that required a thick reference manual nearby. Ruby/ActiveLdap aims to fix
-  that. Inspired by ActiveRecord, Ruby/ActiveLdap provides an object
+  that required a thick reference manual nearby. ActiveLdap aims to fix
+  that. Inspired by ActiveRecord, ActiveLdap provides an object
   oriented interface to LDAP entries. 
 </wiki:comment>
-Ruby/ActiveLdap は LDAP を操作する今までにない方法です。大半のLDAP操作は難しい
+ActiveLdap は LDAP を操作する今までにない方法です。大半のLDAP操作は難しい
 LDIFを扱うか、ウェブインターフェースを利用するか、説明を省かれたリファレンスマ
 ニュアルを参照しながら、難解なAPI利用しなければなりませんでした。
 
-Ruby/ActiveLdap はこの解決を目指します。Rub/ActiveRecord によって着想し、
-Ruby/ActiveLdap は LDAP エントリーに対するオブジェクト指向のインターフェースを提
+ActiveLdap はこの解決を目指します。ActiveRecord によって着想し、
+ActiveLdap は LDAP エントリーに対するオブジェクト指向のインターフェースを提
 供します。
 
 <wiki:comment>
@@ -61,15 +61,15 @@ Micrsoft ActiveDirectory に対してこれを試みていません）
   * OpenLdAP
 
 <wiki:comment>
-  So why use Ruby/ActiveLdap?
+  So why use ActiveLdap?
 </wiki:comment>
-== では何故 Ruby/ActiveLdap なのか？ ==
+== では何故 ActiveLdap なのか？ ==
 
 <wiki:comment>
   不要？
   Well if you like to fumble around in the dark, dank innards of LDAP, you can
   quit reading now. However, if you'd like a cleaner way to integrate LDAP in to
-  your existing code, hopefully that's why you'll want to use Ruby/ActiveLdap. 
+  your existing code, hopefully that's why you'll want to use ActiveLdap. 
 </wiki:comment>
 
 <wiki:comment>
@@ -77,10 +77,10 @@ Micrsoft ActiveDirectory に対してこれを試みていません）
   the world of the predefined LDAP API. While this API is important for many
   reasons, having to extract code out of LDAP search blocks and create huge
   arrays of LDAP.mod entries make code harder to read, less intuitive, and just
-  less fun to write. Hopefully, Ruby/ActiveLdap will remedy all of these
+  less fun to write. Hopefully, ActiveLdap will remedy all of these
   problems! 
 </wiki:comment>
-LDAPを直接扱うさいには（たとえ素晴らしい Ruby/LDAP ライブラリを用いても）、既存の LDAP API に拘束されることになります。このAPIは巨大な配列を生成し、コードを読みづらく、また楽しくないものにしてしまいます。もしあなたがあなたのコードにLDAPを統合するためのきれいな方法を欲するなら、Ruby/ActiveLdap を使う理由になり得ます。
+LDAPを直接扱うさいには（たとえ素晴らしい Ruby/LDAP ライブラリを用いても）、既存の LDAP API に拘束されることになります。このAPIは巨大な配列を生成し、コードを読みづらく、また楽しくないものにしてしまいます。もしあなたがあなたのコードにLDAPを統合するためのきれいな方法を欲するなら、ActiveLdap を使う理由になり得ます。
 
 <wiki:comment>
   Getting Started
@@ -88,9 +88,9 @@ LDAPを直接扱うさいには（たとえ素晴らしい Ruby/LDAP ライブ�
 = 準備 =
 
 <wiki:comment>
-  Ruby/ActiveLdap does have some overhead when you get started. You must not only install the package and all of it's requirements, but you must also make customizations that will let it work in your environment. 
+  ActiveLdap does have some overhead when you get started. You must not only install the package and all of it's requirements, but you must also make customizations that will let it work in your environment. 
 </wiki:comment>
-Ruby/ActiveLdap を利用する前に動作条件を満たす必要があります。また環境に応じて使いやすいようにカスタマイズすることも可能です。
+ActiveLdap を利用する前に動作条件を満たす必要があります。また環境に応じて使いやすいようにカスタマイズすることも可能です。
 
 <wiki:comment>
   Requirements
@@ -117,7 +117,7 @@ Ruby/ActiveLdap を利用する前に動作条件を満たす必要がありま�
 <wiki:comment>
   Assuming all the requirements are installed, you can install by grabbing the latest tgz file from the download site.
 
-  The following steps will get the Ruby/ActiveLdap installed in no time!
+  The following steps will get the ActiveLdap installed in no time!
 
     $ tar -xzvf ruby-activeldap-current.tgz
     $ cd ruby-activeldap-VERSION
@@ -158,8 +158,8 @@ irb(main):002:0>
   Customizations
 == カスタマイズ ==
 
-  Now that Ruby/ActiveLdap is installed and working, we still have a few more steps to make it useful for programming. 
-Ruby/ActiveLdap はインストールされ動作可能です。もう少し便利にプログラミングするためのカスタマイズが可能です。
+  Now that ActiveLdap is installed and working, we still have a few more steps to make it useful for programming. 
+ActiveLdap はインストールされ動作可能です。もう少し便利にプログラミングするためのカスタマイズが可能です。
 
   Let's say that you are writing a Ruby program for managing user and group accounts in LDAP. I will use this as the running example throughout the document.
 あなたのLDAP上のユーザ/グループアカウントを管理するために Ruby プログラミングをするとしましょう。このドキュメントのコード例はそれを想定して記載していきます。
@@ -190,9 +190,9 @@ lib ディレクトリは私たちがカスタマイズを行う場所です。�
 = 利用法 =
 
 <wiki:comment>
-  This section covers using Ruby/ActiveLdap from writing extension classes to writing applications that use them. 
+  This section covers using ActiveLdap from writing extension classes to writing applications that use them. 
 </wiki:comment>
-この章では Ruby/ActiveLdap 拡張クラスをコーディングし、アプリケーションを記述し、それらを利用するまでを記載します。
+この章では ActiveLdap 拡張クラスをコーディングし、アプリケーションを記述し、それらを利用するまでを記載します。
 
 <wiki:comment>
 Just to give a taste of what's to come, here is a quick example using irb: 
@@ -248,18 +248,18 @@ That's it! No let's get back in to it.
 <wiki:comment>
   Extension Classes
 </wiki:comment>
-== Ruby/ActiveLdap 拡張クラス ==
+== ActiveLdap 拡張クラス ==
 <wiki:comment>
   Extension classes are classes that are subclassed from ActiveLdap::Base. They are used to represent objects in your LDAP server abstractly.
 
   Why do I need them?
 
-  Extension classes are what make Ruby/ActiveLdap "active"! They do all the
+  Extension classes are what make ActiveLdap "active"! They do all the
   background work to make easy-to-use objects by mapping the LDAP object's
   attributes on to a Ruby class.  
 </wiki:comment>
 
-Ruby/ActiveLdap 拡張クラスは ActiveLdap::Base のサブクラスです。これらは LDAPオ
+ActiveLdap 拡張クラスは ActiveLdap::Base のサブクラスです。これらは LDAPオ
 ブジェクトを抽象化し、Rubyオブジェクトとして利用するためのインターフェースを提供
 します。
 
@@ -289,9 +289,9 @@ ActiveLdapのクラスメソッドを利用してマッピングのための情�
 
 <wiki:comment>
   ldap_mapping is the only required method to setup an extension class for use
-  with Ruby/ActiveLdap. It must be called inside of a subclass as shown above.
+  with ActiveLdap. It must be called inside of a subclass as shown above.
 </wiki:comment>
-ldap_mapping は Ruby/ActiveLdap とともに拡張クラスを利用するにあたって必須とされ
+ldap_mapping は ActiveLdap とともに拡張クラスを利用するにあたって必須とされ
 る唯一のメソッドです。
 
 <wiki:comment>
@@ -364,17 +364,17 @@ DN はcn から始まるものとして扱われます。
 こと）
 
 <wiki:comment>
-  Something's missing: :classes. :classes is used to tell Ruby/ActiveLdap what
+  Something's missing: :classes. :classes is used to tell ActiveLdap what
   the minimum requirement is when creating a new object. LDAP uses objectClasses
-  to define what attributes a LDAP object may have. Ruby/ActiveLdap needs to
+  to define what attributes a LDAP object may have. ActiveLdap needs to
   know what classes are required when creating a new object. Of course, you can
   leave that field out to default to ['top’] only. Then you can let each
   application choose what objectClasses their objects should have by calling the
   method e.g. Group#add_class(*values).
 </wiki:comment>
-:classes は Ruby/ActiveLdap に対して、新しいオブジェクトを生成するのに必要な最低
+:classes は ActiveLdap に対して、新しいオブジェクトを生成するのに必要な最低
 条件を指示します。LDAP はオブジェクトクラスを利用して、LDAPオブジェクトがどのよ
-うな属性を持ち得るかを定義します。Ruby/ActiveLdap はこれを :classes 引数によって
+うな属性を持ち得るかを定義します。ActiveLdap はこれを :classes 引数によって
 知ることになります。デフォルトは 'top' のみです。このままにすることもできます
 し、add_class メソッドなどによって追加することも可能です。
 
@@ -621,7 +621,7 @@ ActiveLdap::Base
 ActiveLdap::Base has come up a number of times in the examples above. Every time, it was being used as the super class for the wrapper objects. While this is it's main purpose, it also handles quite a bit more in the background.
 What is it?
 
-ActiveLdap::Base is the heart of Ruby/ActiveLdap. It does all the schema parsing for validation and attribute-to-method mangling as well as manage the connection to LDAP.
+ActiveLdap::Base is the heart of ActiveLdap. It does all the schema parsing for validation and attribute-to-method mangling as well as manage the connection to LDAP.
 establish_connection
 
 Base.establish_connection takes many (optional) arguments and is used to connect to the LDAP server. Sometimes you will want to connect anonymously and other times over TLS with user credentials. Base.establish_connection is here to do all of that for you.
@@ -686,7 +686,7 @@ connection
 Base.connection returns the ActiveLdap::Connection object.
 Exceptions
 
-There are a few custom exceptions used in Ruby/ActiveLdap. They are detailed below.
+There are a few custom exceptions used in ActiveLdap. They are detailed below.
 DeleteError
 
 This exception is raised when delete fails. It will include LDAP error information that was passed up during the error.
@@ -707,7 +707,7 @@ Others
 Other exceptions may be raised by the Ruby/LDAP module, or by other subsystems. If you get one of these exceptions and think it should be wrapped, write me an email and let me know where it is and what you expected. For faster results, email a patch!
 Putting it all together
 
-Now that all of the components of Ruby/ActiveLdap have been covered, it's time to put it all together! The rest of this section will show the steps to setup example user and group management scripts for use with the LDAP tree described above.
+Now that all of the components of ActiveLdap have been covered, it's time to put it all together! The rest of this section will show the steps to setup example user and group management scripts for use with the LDAP tree described above.
 
 All of the scripts here are in the package's examples/ directory.
 Setting up lib/
@@ -859,7 +859,7 @@ And finally, a dumb script for removing user - ldapadmin/userdel:
 
 Advanced Topics
 
-Below are some situation tips and tricks to get the most out of Ruby/ActiveLdap.
+Below are some situation tips and tricks to get the most out of ActiveLdap.
 Binary data and other subtypes
 
 Sometimes, you may want to store attributes with language specifiers, or perhaps in binary form. This is (finally!) fully supported. To do so, follow the examples below:
@@ -882,7 +882,7 @@ But wait a minute, I just read in a binary certificate without wrapping it up. S
 
   irb>  user.user_certificate = {'binary' => File.read('example.der')}
 
-You should note that some binary data does not use the binary subtype all the time. One example is jpegPhoto. You can use it as jpegPhoto;binary or just as jpegPhoto. Since the schema dictates that it is a binary value, Ruby/ActiveLdap will write it as binary, but the subtype will not be automatically appended as above. The use of the subtype on attributes like jpegPhoto is ultimately decided by the LDAP site policy and not by any programmatic means.
+You should note that some binary data does not use the binary subtype all the time. One example is jpegPhoto. You can use it as jpegPhoto;binary or just as jpegPhoto. Since the schema dictates that it is a binary value, ActiveLdap will write it as binary, but the subtype will not be automatically appended as above. The use of the subtype on attributes like jpegPhoto is ultimately decided by the LDAP site policy and not by any programmatic means.
 
 The only subtypes defined in LDAPv3 are lang-* and binary. These can be nested though:
 
@@ -931,7 +931,7 @@ Now in your local applications, you can call
 and everything should work well.
 force array results for single values
 
-Even though Ruby/ActiveLdap attempts to maintain programmatic ease by returning Array values only. By specifying 'true’ as an argument to any attribute method you will get back a Array if it is single value. Here's an example:
+Even though ActiveLdap attempts to maintain programmatic ease by returning Array values only. By specifying 'true’ as an argument to any attribute method you will get back a Array if it is single value. Here's an example:
 
   irb> user = User.new('drewry')
   => ...
@@ -1005,7 +1005,7 @@ This is discovered automagically from the LDAP server's schema.
 Limitations
 Speed
 
-Currently, Ruby/ActiveLdap could be faster. I have some recursive type checking going on which slows object creation down, and I'm sure there are many, many other places optimizations can be done. Feel free to send patches, or just hang in there until I can optimize away the slowness.
+Currently, ActiveLdap could be faster. I have some recursive type checking going on which slows object creation down, and I'm sure there are many, many other places optimizations can be done. Feel free to send patches, or just hang in there until I can optimize away the slowness.
 Feedback
 
 Any and all feedback and patches are welcome. I am very excited about this package, and I'd like to see it prove helpful to more people than just myself. 
