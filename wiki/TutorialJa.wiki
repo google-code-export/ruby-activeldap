@@ -688,33 +688,80 @@ has_many の引数は belongs_to とまったく同じ形式をとります。�
 
 === .search ===
 
-.search is a class method that is accessible from any subclass of Base, and Base. It lets the user perform an arbitrary search against the current LDAP connection irrespetive of LDAP mapping data. This is meant to be useful as a utility method to cover 80% of the cases where a user would want to use Base.connection directly.
+<wiki:comment>
+  .search is a class method that is accessible from any subclass of Base, and
+  Base. It lets the user perform an arbitrary search against the current LDAP
+  connection irrespetive of LDAP mapping data. This is meant to be useful as a
+  utility method to cover 80% of the cases where a user would want to use
+  Base.connection directly.
+</wiki:comment>
+.search は ActiveLdap::Base か、そのサブクラスから呼び出し可能なクラスメソッドで
+す。拡張クラスと LDAPツリーとのマッピングを無視して検索することができます。直接
+Base.connection を利用してもよいですが、このメソッドを利用すれば8割の目的は達成
+できるでしょう。
 
+{{{
   irb> Base.search(:base => 'dc=example,dc=com', :filter => '(uid=roo*)',
                    :scope => :sub, :attributes => ['uid', 'cn'])
   =>  [["uid=root,ou=People,dc=dataspill,dc=org",{"cn"=>["root"], "uidNumber"=>["0"]}]
+}}}
 
-You can specify the :filter, :base, :scope, and :attributes, but they all have defaults ?
+<wiki:comment>
+  You can specify the :filter, :base, :scope, and :attributes, but they all have
+  defaults ?
+</wiki:comment>
+:filter, :base, :scope, :attributes の各キーを指定できます。それぞれにデフォルト
+の値を持っています。
 
- * :filter defaults to objectClass=* - usually this isn't what you want
- * :base defaults to the base of the class this is executed from (as set in ldap_mapping)
- * :scope defaults to :sub. Usually you won't need to change it
- * :attributes defaults to [] and is the list of attributes you want back. Empty means all of them.
+<wiki:comment>
+   * :filter defaults to objectClass=* - usually this isn't what you want
+   * :base defaults to the base of the class this is executed from (as set in
+     ldap_mapping)
+   * :scope defaults to :sub. Usually you won't need to change it
+   * :attributes defaults to [] and is the list of attributes you want back.
+     Empty means all of them.
+</wiki:comment>
+  * :filter のデフォルトは "objectClass=*" です。たいていの場合、変更する必要があるでしょう
+  * :base のデフォルトはこのメソッドを実行したクラスの :base です。これは ldap_mapping によって設定されているものです
+  * :scope は :sub に設定されています。
+  * :attributes のデフォルトは [] です。これはあなたが欲しい属性名のリストを指定してください。空の場合はすべての属性を取得します
 
-valid?
+=== valid? ===
 
-valid? is a method that verifies that all attributes that are required by the objects current objectClasses are populated.
-save
+<wiki:comment>
+  valid? is a method that verifies that all attributes that are required by the
+  objects current objectClasses are populated.
+</wiki:comment>
+valid? はインスタンスメソッドです。オブジェクトクラスで必要とされる属性が備わっ
+ているか検査します。真偽値を返します。
 
-save is a method that writes any changes to an object back to the LDAP server. It automatically handles the addition of new objects, and the modification of existing ones.
-.exists?
+=== save ===
 
-exists? is a simple method which returns true is the current object exists in LDAP, or false if it does not.
+<wiki:comment>
+  save is a method that writes any changes to an object back to the LDAP server.
+  It automatically handles the addition of new objects, and the modification of
+  existing ones.
+</wiki:comment>
+save は LDAP オブジェクトの変更を保存するためのインスタンスメソッドです。実行す
+ると、レシーバのオブジェクトに加えられていた変更が LDAP サーバに反映されます。新
+しいオブジェクトか、既存のオブジェクトかを自動判別し、新規オブジェクトならLDAPサ
+ーバに追加します。既存のものならば更新します。
 
+=== .exists? ===
+
+<wiki:comment>
+  exists? is a simple method which returns true is the current object exists in
+  LDAP, or false if it does not.
+</wiki:comment>
+exists? はシンプルなクラスメソッドです。ある :dn_attribute を持つオブジェクトが
+存在するか検査したい時に利用します。
+
+{{{
  irb> User.exists?("dshadsadsa")
  => false
+}}}
 
-ActiveLdap::Base
+== ActiveLdap::Base ==
 
 ActiveLdap::Base has come up a number of times in the examples above. Every time, it was being used as the super class for the wrapper objects. While this is it's main purpose, it also handles quite a bit more in the background.
 What is it?
