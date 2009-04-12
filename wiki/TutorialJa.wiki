@@ -999,38 +999,116 @@ setup_connection のパラメータや、ネットワークの導通を確認し
 この例外は、LDAPサーバのスキーマ上で定義されていないオブジェクトクラスを利用した
 場合に発生します。
 
-== Others ==
+<wiki:comment>
+  Others
+</wiki:comment>
+=== その他の例外 ===
 
-Other exceptions may be raised by the Ruby/LDAP module, or by other subsystems. If you get one of these exceptions and think it should be wrapped, write me an email and let me know where it is and what you expected. For faster results, email a patch!
+<wiki:comment>
+  Other exceptions may be raised by the Ruby/LDAP module, or by other
+  subsystems. If you get one of these exceptions and think it should be
+  wrapped, write me an email and let me know where it is and what you
+  expected. For faster results, email a patch!
+</wiki:comment>
+その他の例外は Ruby/LDAP モジュールか、さらに別のサブシステムから発生します。も
+しあなたがそれらの例外を受け取り、ActiveLdap の例外によりラップされるべきだと考
+えたら、あなたが何を期待しているかをメールで教えてください。早く結果を出したい場
+合、メールにパッチを添付してください。
 
-Putting it all together
+<wiki:comment>
+  Putting it all together
+</wiki:comment>
+== 実際に動作するサンプルコード ==
 
-Now that all of the components of ActiveLdap have been covered, it's time to put it all together! The rest of this section will show the steps to setup example user and group management scripts for use with the LDAP tree described above.
+<wiki:comment>
+  Now that all of the components of ActiveLdap have been covered, it's time to
+  put it all together! The rest of this section will show the steps to setup
+  example user and group management scripts for use with the LDAP tree described
+  above.
+</wiki:comment>
+ここまでで ActiveLdap のすべてのコンポーネントについて記述しました。さあ、実際に
+動作するコードを配置するときです！ 以降では、いままで例に挙げてきた LDAP ツリー
+上の、ユーザとグループを管理するためのスクリプトを順番にセットアップしてきま
+す。
 
-All of the scripts here are in the package's examples/ directory.
-Setting up lib/
+<wiki:comment>
+  All of the scripts here are in the package's examples/ directory.
+</wiki:comment>
+以下に示すサンプルコードは、ActiveLdap ライブラリの examples/ ディレクトリにも配
+置されています。
 
-In ldapadmin/lib/ create the file user.rb:
+<wiki:comment>
+  Setting up lib/
+</wiki:comment>
+=== 準備 ===
 
-  cat <<EOF
-  class User < ActiveLdap::Base
-    ldap_mapping :dn_attribute => 'uid', :prefix => 'ou=People', :classes => ['top', 'account', 'posixAccount']
-    belongs_to :groups, :class => 'Group', :wrap => 'memberUid'
+<wiki:comment>
+  前のほうで ldapadmin ディレクトリの作成を削除しているので追加
+</wiki:comment>
+まず必要なディレクトリを作成します
+{{{
+  mkdir -p ldapadmin/objects
+}}}
+
+<wiki:comment>
+  In ldapadmin/lib/ create the file user.rb:
+</wiki:comment>
+次に、ldapadin/objects/user.rb を作成します。コードは以下のようにしてください。
+
+{{{
+require 'objects/group'
+
+class User < ActiveLdap::Base
+  ldap_mapping :dn_attribute => 'uid', :prefix => 'ou=People',
+               :classes => ['person', 'posixAccount']
+  belongs_to :primary_group, :class => "Group",
+             :foreign_key => "gidNumber", :primary_key => "gidNumber"
+  belongs_to :groups, :many => 'memberUid'
+
+  # An example of using the old "return_objects" API with the
+  # new ActiveRecord-style API.
+  alias groups_mapping groups
+  def groups(return_objects=true)
+    return groups_mapping if return_objects
+    attr = 'cn'
+    Group.search(:attribute => 'memberUid',
+                 :value => id,
+                 :attributes => [attr]).map {|dn, attrs| attrs[attr]}.flatten
   end
-  EOF
+end
+}}}
 
-In ldapadmin/lib/ create the file group.rb:
+<wiki:comment>
+  In ldapadmin/lib/ create the file group.rb:
+</wiki:comment>
+同様に、ldapadmin/objects/group.rb を作成します。
 
-  cat <<EOF
-  class Group < ActiveLdap::Base
-    ldap_mapping :classes => ['top', 'posixGroup'], :prefix => 'ou=Group'
-    has_many :members, :class => "User", :many => "memberUid"
-    has_many :primary_members, :class => 'User', :foreign_key => 'gidNumber', :primary_key => 'gidNumber'
-  end # Group
-  EOF
+{{{
+class Group < ActiveLdap::Base
+  ldap_mapping :dn_attribute => "cn",
+               :classes => ['posixGroup']
+  # Inspired by ActiveRecord, this tells ActiveLDAP that the
+  # LDAP entry has a attribute which contains one or more of
+  # some class |:class_name| where the attributes name is
+  # |:local_key|. This means that it will call
+  # :class_name.new(value_of(:local_key)) to create the objects.
+  has_many :members, :class => "User", :wrap => "memberUid"
+  has_many :primary_members, :class => 'User',
+           :foreign_key => 'gidNumber',
+           :primary_key => 'gidNumber'
+end 
+}}}
 
-Now, we can write some small scripts to do simple management tasks.
-Creating LDAP entries
+<wiki:comment>
+  Now, we can write some small scripts to do simple management tasks.
+</wiki:comment>
+さあ、これでシンプルな管理タスクのためのスクリプトを書けるようになりました。
+
+<wiki:comment>
+  Creating LDAP entries
+</wiki:comment>
+
+=== LDAP エントリの作成 ===
 
 Now let's create a really dumb script for adding users - ldapadmin/useradd:
 
