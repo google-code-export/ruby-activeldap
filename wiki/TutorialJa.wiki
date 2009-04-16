@@ -1110,8 +1110,13 @@ end
 
 === LDAP エントリの作成 ===
 
-Now let's create a really dumb script for adding users - ldapadmin/useradd:
+<wiki:comment>
+  Now let's create a really dumb script for adding users -
+  ldapadmin/useradd:
+</wiki:comment>
+さぁ、早速ユーザを追加するための ldapadmin/useradd スクリプトを作成しましょう。
 
+<wiki:comment>
   #!/usr/bin/ruby -W0
 
   require 'active_ldap'
@@ -1154,11 +1159,67 @@ Now let's create a really dumb script for adding users - ldapadmin/useradd:
     puts user.errors.full_messages
     exit 1
   end
+</wiki:comment>
+{{{
+  #!/usr/bin/ruby -W0
 
-Managing LDAP entries
+  base = File.expand_path(File.join(File.dirname(__FILE__), ".."))
+  $LOAD_PATH << File.join(base, "lib")
+  $LOAD_PATH << File.join(base, "examples")
 
-Now let's create another dumb script for modifying users - ldapadmin/usermod:
+  require 'active_ldap'
+  require 'objects/user'
+  require 'objects/group'
 
+  argv, opts, options = ActiveLdap::Command.parse_options do |opts, options|
+    opts.banner += " USER_NAME CN UID"
+  end
+
+  if argv.size == 3
+    name, cn, uid = argv
+  else
+    $stderr.puts opts
+    exit 1
+  end
+
+  pwb = Proc.new do |user|
+    ActiveLdap::Command.read_password("[#{user}] Password: ")
+  end
+
+  ActiveLdap::Base.setup_connection(:password_block => pwb,
+                                    :allow_anonymous => false)
+
+  if User.exists?(name)
+    $stderr.puts("User #{name} already exists.")
+    exit 1
+  end
+
+  user = User.new(name)
+  user.add_class('shadowAccount')
+  user.cn = cn
+  user.uid_number = uid
+  user.gid_number = uid
+  user.home_directory = "/home/#{name}"
+  user.sn = "somesn"
+  unless user.save
+    puts "failed"
+    puts user.errors.full_messages
+    exit 1
+  end
+}}}
+
+<wiki:comment>
+  Managing LDAP entries
+</wiki:comment>
+=== LDAP エントリの管理 ===
+
+<wiki:comment>
+  Now let's create another dumb script for modifying users -
+  ldapadmin/usermod:
+</wiki:comment>
+次に、ユーザの属性変更スクリプト /ldapadmin/usermod を作成します。
+
+<wiki:comment>
   #!/usr/bin/ruby -W0
 
   require 'active_ldap'
@@ -1197,11 +1258,63 @@ Now let's create another dumb script for modifying users - ldapadmin/usermod:
     puts user.errors.full_messages
     exit 1
   end
+</wiki:comment>
+{{{
+#!/usr/bin/ruby -W0
 
-Removing LDAP entries
+base = File.expand_path(File.join(File.dirname(__FILE__), ".."))
+$LOAD_PATH << File.join(base, "lib")
+$LOAD_PATH << File.join(base, "examples")
 
-And finally, a dumb script for removing user - ldapadmin/userdel:
+require 'active_ldap'
+require 'objects/user'
+require 'objects/group'
 
+argv, opts, options = ActiveLdap::Command.parse_options do |opts, options|
+  opts.banner += " USER_NAME CN UID"
+end
+
+if argv.size == 3
+  name, cn, uid = argv
+else
+  $stderr.puts opts
+  exit 1
+end
+
+pwb = Proc.new do |user|
+  ActiveLdap::Command.read_password("[#{user}] Password: ")
+end
+
+ActiveLdap::Base.setup_connection(:password_block => pwb,
+                                  :allow_anonymous => false)
+
+unless User.exists?(name)
+  $stderr.puts("User #{name} doesn't exist.")
+  exit 1
+end
+
+user = User.find(name)
+user.cn = cn
+user.uid_number = uid
+user.gid_number = uid
+unless user.save
+  puts "failed"
+  puts user.errors.full_messages
+  exit 1
+end
+}}}
+
+<wiki:comment>
+  Removing LDAP entries
+</wiki:comment>
+LDAP エントリの削除
+
+<wiki:comment>
+  And finally, a dumb script for removing user - ldapadmin/userdel:
+</wiki:comment>
+最後に、ユーザ削除のためのスクリプト ldapadmin/userdel を作成します。
+
+<wiki:comment>
   #!/usr/bin/ruby -W0
 
   require 'active_ldap'
@@ -1232,8 +1345,48 @@ And finally, a dumb script for removing user - ldapadmin/userdel:
   end
 
   User.destroy(name)
+</wiki:comment>
+{{{
+#!/usr/bin/ruby -W0
 
-Advanced Topics
+base = File.expand_path(File.join(File.dirname(__FILE__), ".."))
+$LOAD_PATH << File.join(base, "lib")
+$LOAD_PATH << File.join(base, "examples")
+
+require 'active_ldap'
+require 'objects/user'
+require 'objects/group'
+
+argv, opts, options = ActiveLdap::Command.parse_options do |opts, options|
+  opts.banner += " USER_NAME"
+end
+
+if argv.size == 1
+  name = argv.shift
+else
+  $stderr.puts opts
+  exit 1
+end
+
+pwb = Proc.new do |user|
+  ActiveLdap::Command.read_password("[#{user}] Password: ")
+end
+
+ActiveLdap::Base.setup_connection(:password_block => pwb,
+                                  :allow_anonymous => false)
+
+unless User.exists?(name)
+  $stderr.puts("User #{name} doesn't exist.")
+  exit 1
+end
+
+User.destroy(name)
+}}}
+
+<wiki:comment>
+  Advanced Topics
+</wiki:comment>
+== 高度な話題 ==
 
 Below are some situation tips and tricks to get the most out of ActiveLdap.
 Binary data and other subtypes
