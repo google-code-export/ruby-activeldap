@@ -10,7 +10,7 @@ Ruby/LDAP is an extension module for Ruby. It provides the interface to some com
 
 == Download ==
 
- * Download archives from the ActiveLdap [http://code.google.com/p/ruby-activeldap/downloads/list project page].
+ * Download archives from the Ruby/LDAP [https://sourceforge.net/projects/ruby-ldap/ project page] or ActiveLdap [http://code.google.com/p/ruby-activeldap/downloads/list project page].
  * Using version from trunk:
 
 {{{
