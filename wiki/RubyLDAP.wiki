@@ -1,12 +1,12 @@
 #labels Phase-Requirements,Phase-Deploy
 = About Ruby/LDAP =
 
-Ruby/LDAP is an extension module for Ruby. It provides the interface to some common LDAP libraries (for example, [http://www.openldap.org/ OpenLDAP], [http://www.umich.edu/~dirsvcs/ldap/ UMich LDAP], [http://www.mozilla.org/directory/ Netscape SDK] and [http://www.microsoft.com/windowsserver2008/en/us/active-directory.aspx Active Directory]). The common API for application development is described in RFC1823 and most libraries comply with it. Ruby/LDAP supports those libraries. 
+Ruby/LDAP is an extension module for Ruby. It provides the interface to some common LDAP libraries (for example, [http://www.openldap.org/ OpenLDAP], [http://www.mozilla.org/directory/ Netscape SDK] and [http://www.microsoft.com/windowsserver2008/en/us/active-directory.aspx Active Directory]). The common API for application development is described in RFC1823 and most libraries comply with it. Ruby/LDAP supports those libraries. 
 
 == Requirement ==
 
   * Ruby 1.8.x / 1.9.x (at least 1.8.2 if you want to use ldap/control)
-  * OpenLDAP, Netscape SDK, Windows 2003 or Windows XP
+  * OpenLDAP, Netscape SDK or Active Directory
 
 == Download ==
 
