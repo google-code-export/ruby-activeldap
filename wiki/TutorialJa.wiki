@@ -526,7 +526,7 @@ dn_attributeにした属性名が利用されます。
 :many は所属先が複数のLDAPオブジェクトにわたる場合に利用します。:foreign_key に
 指定した属性に対応する、所属先のLDAPエントリの属性名を設定します。上記の例では
 :foreign_key に uid、:many に memberUid といった具合です。（訳注：RDBでの外部
-キーと考えると混乱するかもしれません。こういったものだと考えてください）
+キーと同様に考えると混乱するかもしれません。こういったものだと考えてください）
 
 :primary_key は所属先がただひとつのLDAPオブジェクトである場合に利用します。
 gidNumber に指定するような、プライマリの所属グループなどがこれに該当するでしょ
@@ -1102,7 +1102,7 @@ end
 <wiki:comment>
   Now, we can write some small scripts to do simple management tasks.
 </wiki:comment>
-さあ、これでシンプルな管理タスクのためのスクリプトを書けるようになりました。
+これでシンプルな管理タスクのためのスクリプトを書けるようになりました。
 
 <wiki:comment>
   Creating LDAP entries
@@ -1114,7 +1114,7 @@ end
   Now let's create a really dumb script for adding users -
   ldapadmin/useradd:
 </wiki:comment>
-さぁ、早速ユーザを追加するための ldapadmin/useradd スクリプトを作成しましょう。
+早速ユーザを追加するための ldapadmin/useradd スクリプトを作成しましょう。
 
 <wiki:comment>
   #!/usr/bin/ruby -W0
@@ -1307,7 +1307,7 @@ end
 <wiki:comment>
   Removing LDAP entries
 </wiki:comment>
-LDAP エントリの削除
+=== LDAP エントリの削除 ===
 
 <wiki:comment>
   And finally, a dumb script for removing user - ldapadmin/userdel:
@@ -1388,133 +1388,326 @@ User.destroy(name)
 </wiki:comment>
 == 高度な話題 ==
 
-Below are some situation tips and tricks to get the most out of ActiveLdap.
-Binary data and other subtypes
+<wiki:comment>
+  Below are some situation tips and tricks to get the most out of
+  ActiveLdap.
+</wiki:comment>
+以降では、ActiveLdap を最大限に生かすために、さまざまなシチュエーションで役
+立つテクニックを紹介していきます。
 
-Sometimes, you may want to store attributes with language specifiers, or perhaps in binary form. This is (finally!) fully supported. To do so, follow the examples below:
+<wiki:comment>
+  Binary data and other subtypes
+</wiki:comment>
+=== バイナリデータとサブタイプ ===
 
+<wiki:comment>
+  Sometimes, you may want to store attributes with language specifiers, or
+  perhaps in binary form. This is (finally!) fully supported. To do so,
+  follow the examples below:
+</wiki:comment>
+しばしば、あなたは属性に言語指定子を指定して値を格納したくなるでしょう。それ
+にバイナリデータ形式で投入したいかもしれません。これは十分にサポートされてい
+ます。例を見てみましょう。
+
+{{{
+  # 新規ユーザの作成
   irb> user = User.new('drewry')
   => ...
-  # This adds a cn entry in lang-en and whatever the server default is.
+  # cn をサーバデフォルト（この場合は英語）でエントリに追加
   irb> user.cn = [ 'wad', {'lang-en' => ['wad', 'foo']} ]
   => ...
   irb> user.cn
   => ["wad", {"lang-en-us" => ["wad", "Will Drewry"]}]
-  # Now let's add a binary X.509 certificate (assume objectClass is correct)
+  # X.509 証明書をバイナリ形式で追加（objectClass の整合性は解決しているものとします）
   irb> user.user_certificate = File.read('example.der')
   => ...
+  # 保存
   irb> user.save
+}}}
 
-So that's a lot to take in. Here's what is going on. I just set the LDAP object's cn to "wad" and cn:lang-en-us to ["wad", "Will Drewry"]. Anytime a LDAP subtype is required, you must encapsulate the data in a Hash.
+<wiki:comment>
+  So that's a lot to take in. Here's what is going on. I just set the LDAP
+  object's cn to "wad" and cn:lang-en-us to ["wad", "Will Drewry"]. Anytime a
+  LDAP subtype is required, you must encapsulate the data in a Hash.
+</wiki:comment>
 
-But wait a minute, I just read in a binary certificate without wrapping it up. So any binary attribute _that requires ;binary subtyping_ will automagically get wrapped in {'binary’ => value} if you don't do it. This keeps your writes from breaking, and my code from crying. For correctness, I could have easily done the following:
+この例には見るべき点が多くあります。順番に見てみましょう。例では、cn に"wad"
+と cn;lang-en-us に ["wad", "Will Drewry"] を追加しています。LDAP属性のサブ
+タイプが必要とされるとき、それらのデータは Hash で包む必要があります。
 
+<wiki:comment>
+  But wait a minute, I just read in a binary certificate without wrapping it up.
+  So any binary attribute _that requires ;binary subtyping_ will automagically
+  get wrapped in {'binary’ => value} if you don't do it. This keeps your writes
+  from breaking, and my code from crying. For correctness, I could have easily
+  done the following:
+</wiki:comment>
+一方で、上記の例では Hash に包まずに X.509 証明書を格納しました。バイナリデータ
+を格納するいくつかのの属性は ;binary サブタイプが必要です。これらの属性に対して
+は、プログラマがそうしなくても、自動で {'binary' => value} の Hash で包まれます。
+これはコーディングの助けになりますが、正確性のために明示的に Hash で包むことも可
+能です。
+
+{{{
   irb>  user.user_certificate = {'binary' => File.read('example.der')}
+}}}
 
-You should note that some binary data does not use the binary subtype all the time. One example is jpegPhoto. You can use it as jpegPhoto;binary or just as jpegPhoto. Since the schema dictates that it is a binary value, ActiveLdap will write it as binary, but the subtype will not be automatically appended as above. The use of the subtype on attributes like jpegPhoto is ultimately decided by the LDAP site policy and not by any programmatic means.
+<wiki:comment>
+  You should note that some binary data does not use the binary subtype all the
+  time. One example is jpegPhoto. You can use it as jpegPhoto;binary or just as
+  jpegPhoto. Since the schema dictates that it is a binary value, ActiveLdap
+  will write it as binary, but the subtype will not be automatically appended as
+  above. The use of the subtype on attributes like jpegPhoto is ultimately
+  decided by the LDAP site policy and not by any programmatic means.
+</wiki:comment>
+バイナリデータを格納する場合であっても、必ずしも ;binary サブタイプを利用する訳
+ではないことに注意してください。例としては jpegPhoto があります。あなたは
+jpegPhoto;binaryか jpegPhoto を利用することができます。スキーマがバイナリ値だと
+指示するので ActiveLdap はバイナリ値として書き込むでしょうが、サブタイプは自動的
+には付与されません。jpegPhoto のような属性にサブタイプを利用するかどうかは、LDAP
+のサイトポリシーによって決められることであって、プログラムが自動で判断できるもの
+ではありません。（訳注：userCertificate 属性については、RFC上で ;binary サブタイ
+プを利用するよう指示されているため、自動的に ;binary 属性を付与できる一方、
+jpegPhoto についてそのような言及が RFC 上にないために、そのような対応を自動的に
+行うことは難しい、ということのようです）
 
-The only subtypes defined in LDAPv3 are lang-* and binary. These can be nested though:
+<wiki:comment>
+  The only subtypes defined in LDAPv3 are lang-* and binary. These can be
+  nested though:
+</wiki:comment>
+LDAPv3 で唯一定義されているサブタイプが lang-* と binary の組み合わせです。
+これらは以下のように Hash をネストさせることで実現できます。
 
+{{{
  irb> user.cn = [{'lang-JP-jp' => {'binary' => 'somejp'}}]
+}}}
 
-As I understand it, OpenLDAP does not support nested subtypes, but some documentation I've read suggests that Netscape's LDAP server does. I only have access to OpenLDAP. If anyone tests this out, please let me know how it goes!
+<wiki:comment>
+  As I understand it, OpenLDAP does not support nested subtypes, but some
+  documentation I've read suggests that Netscape's LDAP server does. I only have
+  access to OpenLDAP. If anyone tests this out, please let me know how it goes!
+</wiki:comment>
+ネストされたサブタイプは OpenLDAP でサポートされていません。ですが、いくつかの文
+書を確認したところ、ネットスケープの LDAP サーバは対応しているようです。私がアク
+セスしたのは OpenLDAP のみなので、どなたかこの機能をテストしたなら、どのように動
+作したかを連絡してもらえると助かります。
 
-And that pretty much wraps up this section.
-Further integration with your environment aka namespacing
+<wiki:comment>
+  And that pretty much wraps up this section.
+</wiki:comment>
+このセクションの他の項目についても同様です。どのように動作したか連絡もらえると助
+かります。
 
-If you want this to cleanly integrate into your system-wide Ruby include path, you should put your extension classes inside a custom module.
+<wiki:comment>
+  Further integration with your environment aka namespacing
+</wiki:comment>
 
-Example:
+=== 環境とのさらなる統合 - 別名 名前空間の構築 ===
 
-  ./myldap.rb:
-  require 'active_ldap'
-  require 'myldap/user'
-  require 'myldap/group'
-  module MyLDAP
-  end
+<wiki:comment>
+  If you want this to cleanly integrate into your system-wide Ruby include path,
+  you should put your extension classes inside a custom module.
+</wiki:comment>
+ActiveLdap を Ruby のインクルードパスに統合したいなら、拡張クラスをカスタムモジ
+ュールの中に統合するとよいでしょう。
 
-  ./myldap/user.rb:
-  module MyLDAP
+<wiki:comment>
+  Example:
+</wiki:comment>
+例：
+
+==== ./myldap.rb: ====
+{{{
+require 'active_ldap'
+require 'myldap/user'
+require 'myldap/group'
+module MyLDAP
+end
+}}}
+
+==== ./myldap/user.rb: ====
+{{{
+module MyLDAP
   class User < ActiveLdap::Base
     ldap_mapping :dn_attribute => 'uid', :prefix => 'ou=People', :classes => ['top', 'account', 'posixAccount']
     belongs_to :groups, :class => 'MyLDAP::Group', :many => 'memberUid'
   end
-  end
+end
+}}}
 
-  ./myldap/group.rb:
-  module MyLDAP
+==== ./myldap/group.rb: ====
+{{{
+module MyLDAP
   class Group < ActiveLdap::Base
     ldap_mapping :classes => ['top', 'posixGroup'], :prefix => 'ou=Group'
     has_many :members, :class => 'MyLDAP::User', :wrap => 'memberUid'
-    has_many :primary_members, :class => 'MyLDAP::User', :foreign_key => 'gidNumber', :primary_key => 'gidNumber'
+    has_many :primary_members, :class => 'MyLDAP::User', :wrap => 'gidNumber', :primary_key => 'gidNumber'
   end
-  end
+end
+}}}
 
-Now in your local applications, you can call
+<wiki:comment>
+  Now in your local applications, you can call
+</wiki:comment>
+こうすれば、あなたのアプリケーションでは以下のように呼び出すことができます。
 
-  require 'myldap'
+{{{
+require 'myldap'
 
-  MyLDAP::Group.new('foo')
-  ...
+MyLDAP::Group.new('foo')
+...
+}}}
 
-and everything should work well.
-force array results for single values
+<wiki:comment>
+  and everything should work well.
+</wiki:comment>
+すべてのクラスは正しく動作するでしょう。
 
-Even though ActiveLdap attempts to maintain programmatic ease by returning Array values only. By specifying 'true’ as an argument to any attribute method you will get back a Array if it is single value. Here's an example:
+<wiki:comment>
+  force array results for single values
+</wiki:comment>
 
+=== 単一内容の属性にたいする getter アクセスであっても、配列で返すようにする ===
+
+<wiki:comment>
+  Even though ActiveLdap attempts to maintain programmatic ease by returning
+  Array values only. By specifying 'true’ as an argument to any attribute
+  method you will get back a Array if it is single value. Here's an example:
+</wiki:comment>
+属性メソッドの引数に true を渡すことで、その属性の中身が単一の内容であっても配列
+で返すように挙動を変更することができます。
+
+{{{
   irb> user = User.new('drewry')
   => ...
   irb> user.cn(true)
   => ["Will Drewry"]
+}}}
 
-Dynamic attribute crawling
+<wiki:comment>
+  Dynamic attribute crawling
+</wiki:comment>
+=== 動的な属性のクローリング ===
 
-If you use tab completion in irb, you'll notice that you /can/ tab complete the dynamic attribute methods. You can still see which methods are for attributes using Base#attribute_names:
+<wiki:comment>
+  If you use tab completion in irb, you'll notice that you /can/ tab complete
+  the dynamic attribute methods. You can still see which methods are for
+  attributes using Base#attribute_names:
+</wiki:comment>
+IRBでタブ補完機能を有効にしている場合、属性アクセサメソッドをタブ補完で呼び出す
+ことができます。また、Base#attribute_names メソッドを利用すれば属性アクセサメソ
+ッドの一覧を得ることが可能です。
 
+{{{
   irb> d = Group.new('develop')
   => ...
   irb> d.attribute_names
   => ["gidNumber", "cn", "memberUid", "commonName", "description", "userPassword", "objectClass"]
+}}}
 
-Juggling multiple LDAP connections
+<wiki:comment>
+  Juggling multiple LDAP connections
+</wiki:comment>
+=== 複数の LDAP 接続の切り替え ===
 
-In the same vein as the last tip, you can use multiple LDAP connections by per class as follows:
+<wiki:comment>
+  In the same vein as the last tip, you can use multiple LDAP connections by per
+  class as follows:
+</wiki:comment>
+最後に、クラスごとに別々の LDAP コネクションを利用するには、以下のようにしてくだ
+さい。
 
+{{{
   irb> anon_class = Class.new(Base)
   => ...
   irb> anon_class.setup_connection
   => ...
   irb> auth_class = Class.new(Base)
   => ...
-  irb> auth_class.setup_connection(:password_block => {'mypass'})
+  irb> auth_class.setup_connection(:password_block => lambda{'mypass'})
   => ...
+}}}
 
-This can be useful for doing authentication tests and other such tricks.
-:try_sasl
+<wiki:comment>
+  This can be useful for doing authentication tests and other such tricks.
+</wiki:comment>
+これは認証のテストなどに有効です。
 
-If you have the Ruby/LDAP package with the SASL/GSSAPI patch from Ian MacDonald's web site, you can use Kerberos to bind to your LDAP server. By default, :try_sasl is false.
+<wiki:comment>
+  :try_sasl
+</wiki:comment>
+=== :try_sasl ===
 
-Also note that you must be using OpenLDAP 2.1.29 or higher to use SASL/GSSAPI due to some bugs in older versions of OpenLDAP.
-Don't be afraid! [Internals]
+<wiki:comment>
+  If you have the Ruby/LDAP package with the SASL/GSSAPI patch from Ian
+  MacDonald's web site, you can use Kerberos to bind to your LDAP server. By
+  default, :try_sasl is false.
+</wiki:comment>
+:try_sasl を利用することによって LDAP サーバとのバインドに Kerberos を利用するこ
+とができます。
 
-Don't be afraid to add more methods to the extensions classes and to experiment. That's exactly how I ended up with this package. If you come up with something cool, please share it!
+<wiki:comment>
+  Also note that you must be using OpenLDAP 2.1.29 or higher to use SASL/GSSAPI
+  due to some bugs in older versions of OpenLDAP.
+</wiki:comment>
+またこの場合、OpenLDAP 2.1.29 かそれ以上が必要です。それ以前のバージョンには多数
+のバグが残っています。
 
-The internal structure of ActiveLdap::Base, and thus all its subclasses, is still in flux. I've tried to minimize the changes to the overall API, but the internals are still rough around the edges.
-Where's ldap_mapping data stored? How can I get to it?
+<wiki:comment>
+  Don't be afraid! [Internals]
+</wiki:comment>
+=== 恐れないでください！ ===
 
-When you call ldap_mapping, it overwrites several class methods inherited from Base:
+<wiki:comment>
+  Don't be afraid to add more methods to the extensions classes and to
+  experiment. That's exactly how I ended up with this package. If you come up
+  with something cool, please share it!
+</wiki:comment>
+更にメソッドを追加することや、拡張クラスを定義することや、実験することを恐れない
+でください。私にとってこのパッケージの作成は一区切りつきましたが、もしクールな何
+かをあなたが見つけたなら、それを共有させてください！
+
+<wiki:comment>
+  The internal structure of ActiveLdap::Base, and thus all its subclasses, is
+  still in flux. I've tried to minimize the changes to the overall API, but the
+  internals are still rough around the edges.
+</wiki:comment>
+ActiveLdap::Base やそのサブクラスの構造は、まだ不安定です。外側の API については
+最小の変化で済ませてきましたが、内部についてはまだ荒削りです。
+
+<wiki:comment>
+  Where's ldap_mapping data stored? How can I get to it?
+</wiki:comment>
+=== ldap_mapping データはどこに保存されていますか？ それらはどうやって取得しますか？ ===
+
+<wiki:comment>
+  When you call ldap_mapping, it overwrites several class methods inherited from
+  Base:
+</wiki:comment>
+ldap_mapping をコールしたとき、ActiveLdap::Base のいくつかのクラスメソッドがオー
+バーライドされます。以下のメソッドです。
 
   * Base.base()
   * Base.required_classes()
   * Base.dn_attribute()
 
-You can access these from custom class methods by calling MyClass.base(), or whatever. There are predefined instance methods for getting to these from any new instance methods you define:
+<wiki:comment>
+  You can access these from custom class methods by calling MyClass.base(), or
+  whatever. There are predefined instance methods for getting to these from any
+  new instance methods you define:
+</wiki:comment>
+これらのクラスメソッドに MyClass.base() のようにアクセスすることができます。イン
+スタンスからもこれらの情報を知るために、拡張クラスのインスタンスメソッドに以下の
+ような定義済みメソッドが用意されています。
 
  * Base#base()
  * Base#required_classes()
  * Base#dn_attribute()
 
-What else?
+<wiki:comment>
+  What else?
+</wiki:comment>
+=== その他の話題 ===
 
 Well if you want to use the LDAP connection for anything, I'd suggest still calling Base.connection to get it. There really aren't many other internals that need to be worried about. You could get the LDAP schema with Base.schema.
 
