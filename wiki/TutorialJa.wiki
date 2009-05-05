@@ -142,7 +142,7 @@ ActiveLdap を利用する前に動作条件を満たす必要があります。
 
 インストールは gem を利用して可能です。
 {{{
-  gem install active_ldap
+  gem install activeldap
 }}}
 
 インストールされたか確認するには、irb を利用できます。以下のように require して、true が返ってくればインストール成功です。
