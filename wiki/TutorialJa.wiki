@@ -80,7 +80,10 @@ Micrsoft ActiveDirectory に対してこれを試みていません）
   less fun to write. Hopefully, ActiveLdap will remedy all of these
   problems! 
 </wiki:comment>
-LDAPを直接扱うさいには（たとえ素晴らしい Ruby/LDAP ライブラリを用いても）、既存の LDAP API に拘束されることになります。このAPIは巨大な配列を生成し、コードを読みづらく、また楽しくないものにしてしまいます。もしあなたがあなたのコードにLDAPを統合するためのきれいな方法を欲するなら、ActiveLdap を使う理由になり得ます。
+LDAPを直接扱うさいには（たとえ素晴らしい Ruby/LDAP ライブラリを用いても）、既存
+の LDAP API に拘束されることになります。このAPIは巨大な配列を生成し、コードを読
+みづらく、また楽しくないものにしてしまいます。もしあなたがあなたのコードにLDAPを
+統合するためのきれいな方法を欲するなら、ActiveLdap を使う理由になり得ます。
 
 <wiki:comment>
   Getting Started
@@ -88,9 +91,12 @@ LDAPを直接扱うさいには（たとえ素晴らしい Ruby/LDAP ライブ�
 = 準備 =
 
 <wiki:comment>
-  ActiveLdap does have some overhead when you get started. You must not only install the package and all of it's requirements, but you must also make customizations that will let it work in your environment. 
+  ActiveLdap does have some overhead when you get started. You must not only
+  install the package and all of it's requirements, but you must also make
+  customizations that will let it work in your environment. 
 </wiki:comment>
-ActiveLdap を利用する前に動作条件を満たす必要があります。また環境に応じて使いやすいようにカスタマイズすることも可能です。
+ActiveLdap を利用する前に動作条件を満たす必要があります。また環境に応じて使いや
+すいようにカスタマイズすることも可能です。
 
 <wiki:comment>
   Requirements
@@ -140,12 +146,13 @@ ActiveLdap を利用する前に動作条件を満たす必要があります。
   install. 
 </wiki:comment>
 
-インストールは gem を利用して可能です。
+インストールは gem で行えます。
 {{{
   gem install activeldap
 }}}
 
-インストールされたか確認するには、irb を利用できます。以下のように require して、true が返ってくればインストール成功です。
+インストールされたか確認するには、irb を利用できます。以下のように require して、
+true が返ってくればインストール成功です。
 {{{
 $ irb -rubygems
 irb(main):001:0> require 'active_ldap'
@@ -153,36 +160,58 @@ irb(main):001:0> require 'active_ldap'
 irb(main):002:0>
 }}}
 
-もし require が false を返したり例外を発生させたら、インストールに失敗しています。動作条件を満たしているかなどを確認してみてください。
+もし require が false を返したり例外を発生させたら、インストールに失敗していま
+す。動作条件を満たしているかなどを確認してみてください。
 
 <wiki:comment>
 ※obsolete っぽいのでいったんコメントアウト
   Customizations
 == カスタマイズ ==
 
-  Now that ActiveLdap is installed and working, we still have a few more steps to make it useful for programming. 
-ActiveLdap はインストールされ動作可能です。もう少し便利にプログラミングするためのカスタマイズが可能です。
+  Now that ActiveLdap is installed and working, we still have a few more steps
+  to make it useful for programming. 
 
-  Let's say that you are writing a Ruby program for managing user and group accounts in LDAP. I will use this as the running example throughout the document.
-あなたのLDAP上のユーザ/グループアカウントを管理するために Ruby プログラミングをするとしましょう。このドキュメントのコード例はそれを想定して記載していきます。
+ActiveLdap はインストールされ動作可能です。もう少し便利にプログラミングするため
+のカスタマイズが可能です。
 
-  You will want to make a directory called 'ldapadmin’ wherever is convenient. Under this directory, you'll want to make sure you have a 'lib’ directory. 
+  Let's say that you are writing a Ruby program for managing user and group
+  accounts in LDAP. I will use this as the running example throughout the
+  document.
+
+あなたのLDAP上のユーザ/グループアカウントを管理するために Ruby プログラミングを
+するとしましょう。このドキュメントのコード例はそれを想定して記載していきます。
+
+  You will want to make a directory called 'ldapadmin’ wherever is convenient.
+  Under this directory, you'll want to make sure you have a 'lib’ directory. 
+
   $ cd ~
   $ mkdir ldapadmin
   $ cd ldapadmin
   $ mkdir lib
   $ cd lib
-利便性のために、`ldapadmin'　ディレクトリを作成することをお勧めします。この下には lib ディレクトリを作成する必要があります。
+
+利便性のために、`ldapadmin'　ディレクトリを作成することをお勧めします。この下に
+は lib ディレクトリを作成する必要があります。
+
 {{{
   $ cd ~
   $ mkdir -p ldapadmin/lib
   $ cd ldapadmin/lib
 }}}
 
-  The lib directory is where we'll be making customizations. You can, of course, make this changes somewhere in Ruby's default search path to make this accessible to every Ruby scripts. Enough of my babbling, I'm sure you'd like to know what we're going to put in lib/. 
-lib ディレクトリは私たちがカスタマイズを行う場所です。もちろん、この場所はすべての Ruby スクリプトがアクセスできるように Ruby のデフォルトサーチパスに変更することもできます。私のおしゃべりはもういいでしょう。あなたが lib/ ディレクトリに何を置くのか知りたがっているのもわかっています。
+  The lib directory is where we'll be making customizations. You can, of course,
+  make this changes somewhere in Ruby's default search path to make this
+  accessible to every Ruby scripts. Enough of my babbling, I'm sure you'd like
+  to know what we're going to put in lib/. 
 
-  We're going to put extension classes in there. What are extension classes you say . . . 
+lib ディレクトリは私たちがカスタマイズを行う場所です。もちろん、この場所はすべて
+の Ruby スクリプトがアクセスできるように Ruby のデフォルトサーチパスに変更するこ
+ともできます。私のおしゃべりはもういいでしょう。あなたが lib/ ディレクトリに何を
+置くのか知りたがっているのもわかっています。
+
+  We're going to put extension classes in there. What are extension classes you
+  say . . . 
+
 わたしたちはここに拡張クラスを配置します。拡張クラスが何かというと…
 </wiki:comment>
 
@@ -192,15 +221,19 @@ lib ディレクトリは私たちがカスタマイズを行う場所です。�
 = 利用法 =
 
 <wiki:comment>
-  This section covers using ActiveLdap from writing extension classes to writing applications that use them. 
+  This section covers using ActiveLdap from writing extension classes to
+  writing applications that use them. 
 </wiki:comment>
-この章では ActiveLdap 拡張クラスをコーディングし、アプリケーションを記述し、それらを利用するまでを記載します。
+この章では ActiveLdap 拡張クラスをコーディングし、アプリケーションを記述し、それ
+らを利用するまでを記載します。
 
 <wiki:comment>
-Just to give a taste of what's to come, here is a quick example using irb: 
+  Just to give a taste of what's to come, here is a quick example using irb: 
   irb> require 'active_ldap'
 </wiki:comment>
-何を得られるかざっくりつかむために、irb を利用して簡単な例を紹介しましょう。まず ActiveLdap を require します。
+何を得られるかざっくりつかむために、irb を利用して簡単な例を紹介しましょう。まず
+ActiveLdap を require します。
+
 {{{
   irb> require 'active_ldap'
 }}}
@@ -216,7 +249,8 @@ setup_connection を利用します。サンプルとして、接続先は local
 <wiki:comment>
   Here's an extension class that maps to the LDAP Group objects:
 </wiki:comment>
-次に ActiveLdap::Base の拡張クラスを作成します。先の base 以下の LDAP Group オブジェクトとマッピングしてみましょう。
+次に ActiveLdap::Base の拡張クラスを作成します。先の base 以下の LDAP Group オブ
+ジェクトとマッピングしてみましょう。
 
 {{{
   irb> class Group < ActiveLdap::Base
@@ -252,7 +286,8 @@ That's it! No let's get back in to it.
 </wiki:comment>
 == ActiveLdap 拡張クラス ==
 <wiki:comment>
-  Extension classes are classes that are subclassed from ActiveLdap::Base. They are used to represent objects in your LDAP server abstractly.
+  Extension classes are classes that are subclassed from ActiveLdap::Base. They
+  are used to represent objects in your LDAP server abstractly.
 
   Why do I need them?
 
