@@ -1,4 +1,4 @@
-# 作成中
+# 推敲中
 
 <wiki:comment>
   Introduction
@@ -1708,25 +1708,105 @@ ldap_mapping をコールしたとき、ActiveLdap::Base のいくつかのク�
 </wiki:comment>
 === その他の話題 ===
 
-Well if you want to use the LDAP connection for anything, I'd suggest still calling Base.connection to get it. There really aren't many other internals that need to be worried about. You could get the LDAP schema with Base.schema.
+<wiki:comment>
+  Well if you want to use the LDAP connection for anything, I'd suggest still
+  calling Base.connection to get it. There really aren't many other internals
+  that need to be worried about. You could get the LDAP schema with Base.schema.
+</wiki:comment>
+もしあなたが何らかの理由で LDAP コネクションを扱いたいなら、それを取得するために
+ActiveLdap::Base.connection メソッドをコールすることを今のところ提案します。他の
+内部機構で接続を扱うものは少ないです。スキーマの情報については
+ActiveLdap::Base.schema メソッドにより取得できます。
 
-The only other useful tricks are dereferencing and accessing the stored data. Since LDAP attributes can have multiple names, e.g. cn or commonName, any methods you write might need to figure it out. I'd suggest just calling self[attribname] to get the value, but if that's not good enough, you can call look up the stored name by to_real_attribute_name as follows:
+<wiki:comment>
+  The only other useful tricks are dereferencing and accessing the stored data.
+  Since LDAP attributes can have multiple names, e.g. cn or commonName, any
+  methods you write might need to figure it out. I'd suggest just calling
+  self[attribname] to get the value, but if that's not good enough, you can call
+  look up the stored name by to_real_attribute_name as follows:
+</wiki:comment>
+他の便利な唯一の手法は、格納されたデータをデリファレンスしてアクセスすることです
+（訳注：たぶん、Perl の derefence と同じ意味で言っていると思われる）。
 
-   irb> to_real_attribute_name('commonName')
-   => 'cn'
+従来、LDAP属性はcn / commonName のように複数の名前を持つことができ、あなたが書く
+どのメソッドもそれを考慮にいれておかなければならないかもしれません（訳注：cn を
+デリファレンスしても、commonName をデリファレンスしても同じ参照先オブジェクトを
+得ることがあるから注意せよ、の意だと思われます）。
 
-This tells you the name the attribute is stored in behind the scenes (@data). Again, self[attribname] should be enough for most extensions, but if not, it's probably safe to dabble here.
+デリファレンスして値を得るには self['属性名'] とすることを提案しますが、上記を考
+慮すると十分ではありません。実際に格納されている属性の一意な名前を得るためには
+to_real_attribute_name プライベートメソッドを利用することができます。
 
-Also, if you like to look up all aliases for an attribute, you can call the following:
+{{{
+  >> u = User.find :first
+  >> u.instance_eval do
+  ?>   to_real_attribute_name 'commonName'
+  >> end
+  => "cn"
+}}}
 
+<wiki:comment>
+  This tells you the name the attribute is stored in behind the scenes (@data).
+  Again, self[attribname] should be enough for most extensions, but if not, it's
+  probably safe to dabble here.
+</wiki:comment>
+このメソッドは背後（@data）で属性データが格納されている名前をあなたに教えます。
+再び、self[属性名] はほとんどの拡張に対して十分でなくてはなりませんが、そうでな
+くても、たぶんここでは問題にならないでしょう。
+
+<wiki:comment>
+  Also, if you like to look up all aliases for an attribute, you can call the
+  following:
+</wiki:comment>
+また例えば、ユーザクラスの属性名のエイリアスを見つけるためには以下のようにすると
+よいでしょう。
+
+<wiki:comment>
+  *obsolete
  irb> schema.attribute_aliases('cn')
  => ['cn','commonName']
+</wiki:comment>
+{{{
+  irb> User.schema.attribute_type 'cn', 'NAME'
+  => ['cn','commonName']
+}}}
 
-This is discovered automagically from the LDAP server's schema.
-Limitations
-Speed
+<wiki:comment>
+  This is discovered automagically from the LDAP server's schema.
+</wiki:comment>
+これはLDAP サーバのスキーマから自動的に発見します。
 
-Currently, ActiveLdap could be faster. I have some recursive type checking going on which slows object creation down, and I'm sure there are many, many other places optimizations can be done. Feel free to send patches, or just hang in there until I can optimize away the slowness.
-Feedback
+<wiki:comment>
+  Limitations
+</wiki:comment>
+== 制限 ==
 
-Any and all feedback and patches are welcome. I am very excited about this package, and I'd like to see it prove helpful to more people than just myself. 
+<wiki:comment>
+  Speed
+</wiki:comment>
+=== 実行速度 ===
+
+<wiki:comment>
+  Currently, ActiveLdap could be faster. I have some recursive type checking
+  going on which slows object creation down, and I'm sure there are many, many
+  other places optimizations can be done. Feel free to send patches, or just
+  hang in there until I can optimize away the slowness.  
+</wiki:comment>
+今のところ、ActiveLdap はまだ高速にできます。いくつかの再帰的な型チェックをオブ
+ジェクト作成時に行っており、それらがオブジェクトの生成速度を落としています。ま
+た、他のところでも多数の最適化が可能であることも認識しています。最適化できていな
+い部分については私が最適化できるようになるまで我慢してもらうか、または気軽にパッ
+チを送ってください。
+
+<wiki:comment>
+  Feedback
+</wiki:comment>
+== フィードバック ==
+
+<wiki:comment>
+  Any and all feedback and patches are welcome. I am very excited about this
+  package, and I'd like to see it prove helpful to more people than just myself.
+</wiki:comment>
+どんなものでも、またすべてのフィードバックやパッチを歓迎します。私はこのパッケー
+ジについて興奮しています。また、私以上に、人々の助けになることを見たいと思ってい
+ます。
