@@ -13,19 +13,18 @@
   oriented interface to LDAP entries. 
 </wiki:comment>
 ActiveLdap は LDAP を操作する今までにない方法です。大半のLDAP操作は難しい
-LDIFを扱うか、ウェブインターフェースを利用するか、説明を省かれたリファレンスマ
+LDIFを扱うか、ウェブインターフェースを利用するか、説明の省かれたリファレンスマ
 ニュアルを参照しながら、難解なAPIを利用しなければなりませんでした。
 
-ActiveLdap はこの解決を目指します。ActiveRecord によって着想し、
-ActiveLdap は LDAP エントリーに対するオブジェクト指向のインターフェースを提
-供します。
+ActiveLdap はこの解決を目指します。ActiveRecord によって着想した ActiveLdap 
+は、LDAP エントリーに対するオブジェクト指向のインターフェースを提供します。
 
 <wiki:comment>
   The target audience is system administrators and LDAP users everywhere
   that need quick, clean access to LDAP in Ruby. 
 </wiki:comment>
-ターゲットとしている読み手は、システム管理者やLDAPユーザであって、手軽かつきれい
-なLDAPアクセスの方法を求めるすべての人です。
+対象読者はシステム管理者やLDAPユーザであって、手軽かつきれいなLDAPアクセスの方
+法を求めるすべての人です。
 
 <wiki:comment>
   What's LDAP?
@@ -45,11 +44,13 @@ ActiveLdap は LDAP エントリーに対するオブジェクト指向のイン
 </wiki:comment>
 LDAPは”軽量ディレクトリアクセスプロトコル”のことです。これは基本的にLDAPサーバ
 と対話するためのプロトコルを意味します。LDAPサーバは軽量のディレクトリサーバで
-す。LDAPサーバはシンプルな電話帳から、コンピュータ上のユーザアカウントまで、なん
-でも格納することができ、たいていの場合後者のために使われます。このテキストでの例
-は、LDAPを Unix 系システムのための中央認証・認可サーバとして利用することを熟知し
-ているものと仮定します（残念なことに、その名前に含まれているにも関わらず私はまだ
-Micrsoft ActiveDirectory に対してこれを試みていません）
+す。LDAPサーバはシンプルな電話帳からコンピュータ上のユーザアカウントのリストま
+で、幅広い情報を格納することができますが、大抵の場合後者のために使われます。
+
+このテキストでの各例は、読者が LDAPサーバを Unix 系システムのための中央認証・認
+可サーバとして利用することを熟知しているものと仮定して記載しています。（残念なこ
+とに、私はまだMicrsoft ActiveDirectoryに対して ActiveLdap を試していません。名
+前に "Directory" が含まれていはいるのですが。）
 
 <wiki:comment>
   Further reading:
@@ -83,21 +84,24 @@ Micrsoft ActiveDirectory に対してこれを試みていません）
 LDAPを直接扱うさいには（たとえ素晴らしい Ruby/LDAP ライブラリを用いても）、既存
 の LDAP API に拘束されることになります。このAPIは巨大な配列を生成し、コードを読
 みづらく、また楽しくないものにしてしまいます。もしあなたがあなたのコードにLDAPを
-統合するためのきれいな方法を欲するなら、ActiveLdap を使う理由になり得ます。
+統合するためのきれいな方法を欲するなら、ActiveLdap を使う理由になるでしょう。
 
 <wiki:comment>
   Getting Started
 </wiki:comment>
-= 準備 =
+= 利用準備 =
 
 <wiki:comment>
   ActiveLdap does have some overhead when you get started. You must not only
   install the package and all of it's requirements, but you must also make
   customizations that will let it work in your environment. 
-</wiki:comment>
-ActiveLdap を利用する前に動作条件を満たす必要があります。また環境に応じて使いや
-すいようにカスタマイズすることも可能です。
 
+  ※自明すぎるので削除
+  ActiveLdap を利用する前に動作条件を満たす必要があります。
+
+  ※たぶん configuration.rb を編集してた頃とかの名残なので無かったことに
+  また環境に応じて使いやすいようにカスタマイズすることも可能です。
+</wiki:comment>
 <wiki:comment>
   Requirements
       * A Ruby implementation: Ruby 1.8.x, 1.9.1 or JRuby 1.1
@@ -218,7 +222,7 @@ lib ディレクトリは私たちがカスタマイズを行う場所です。�
 <wiki:comment>
   Usage
 </wiki:comment>
-= 利用法 =
+= 利用方法 =
 
 <wiki:comment>
   This section covers using ActiveLdap from writing extension classes to
@@ -249,8 +253,9 @@ setup_connection を利用します。サンプルとして、接続先は local
 <wiki:comment>
   Here's an extension class that maps to the LDAP Group objects:
 </wiki:comment>
-次に ActiveLdap::Base の拡張クラスを作成します。先の base 以下の LDAP Group オブ
-ジェクトとマッピングしてみましょう。
+次に、ActiveLdap::Base のサブクラスを作成します。これを拡張クラスと呼びます。こ
+の拡張クラスを、 base 以下に存在する LDAP の Group オブジェクト群とマッピングし
+てみましょう。
 
 {{{
   irb> class Group < ActiveLdap::Base
@@ -261,17 +266,25 @@ setup_connection を利用します。サンプルとして、接続先は local
 <wiki:comment>
   Here is the Group class in use:
 </wiki:comment>
-こうすると、グループクラスは以下のように利用できます
+
+<wiki:comment>日本語版追記</wiki:comment>
+簡単に説明しましょう。上記のコードでは Group クラスが setup_connection でした :base 以下の ou=Groups 以下のオブジェクト群全体を取り扱うようになります。Group クラスのインスタンスは、ou=Groups 以下の LDAP オブジェクトを表現します。
+
+これで、グループクラスは以下のように利用できます
 {{{
+  # 全てのグループ名を取得
   irb> all_groups = Group.find(:all).collect {|group| group.cn}
   => ["root", "daemon", "bin", "sys", "adm", "tty", ..., "develop"]
 
+  # develop グループの LDAP オブジェクトを取得
   irb> group = Group.find("develop")
   => #<Group objectClass:<...> ...>
 
+  # develop グループの cn を取得
   irb> group.cn
   => "develop"
 
+  # develop グループの gid_number を取得
   irb> group.gid_number
   => 1003
 }}}
@@ -296,9 +309,9 @@ That's it! No let's get back in to it.
   attributes on to a Ruby class.  
 </wiki:comment>
 
-ActiveLdap 拡張クラスは ActiveLdap::Base のサブクラスです。これらは LDAPオ
-ブジェクトを抽象化し、Rubyオブジェクトとして利用するためのインターフェースを提供
-します。
+ActiveLdap 拡張クラスは ActiveLdap::Base のサブクラスです。これらは LDAPオブ
+ジェクトを抽象化し、Rubyオブジェクトとして利用するためのインターフェースを提
+供します。
 
 ActiveLdap::Base を継承したクラスは、プログラマの利便性のために LDAP オブジェク
 トの属性情報を(ActiveRecordのように) Ruby クラスにマッピングします。これは自動で
