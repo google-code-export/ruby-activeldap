@@ -17,7 +17,7 @@ LDIFを扱うか、ウェブインターフェースを利用するか、説明�
 ニュアルを参照しながら、難解なAPIを利用しなければなりませんでした。
 
 ActiveLdap はこの解決を目指します。ActiveRecord によって着想した ActiveLdap 
-は、LDAP エントリーに対するオブジェクト指向のインターフェースを提供します。
+は、LDAP エントリに対するオブジェクト指向のインターフェースを提供します。
 
 <wiki:comment>
   The target audience is system administrators and LDAP users everywhere
@@ -268,7 +268,9 @@ setup_connection を利用します。サンプルとして、接続先は local
 </wiki:comment>
 
 <wiki:comment>日本語版追記</wiki:comment>
-簡単に説明しましょう。上記のコードでは Group クラスが setup_connection でした :base 以下の ou=Groups 以下のオブジェクト群全体を取り扱うようになります。Group クラスのインスタンスは、ou=Groups 以下の LDAP オブジェクトを表現します。
+簡単に説明しましょう。上記のコードでは Group クラスが setup_connection でした:
+base 以下の ou=Groups 以下のオブジェクト群全体を取り扱うようになります。Groupク
+ラスのインスタンスは、ou=Groups 以下にある個々の LDAP オブジェクトを表現します。
 
 これで、グループクラスは以下のように利用できます
 {{{
@@ -308,14 +310,11 @@ That's it! No let's get back in to it.
   background work to make easy-to-use objects by mapping the LDAP object's
   attributes on to a Ruby class.  
 </wiki:comment>
+ActiveLdap 拡張クラスは ActiveLdap::Base のサブクラスです。これらは LDAP サーバ
+内のオブジェクトを抽象的に表現するために利用されます。
 
-ActiveLdap 拡張クラスは ActiveLdap::Base のサブクラスです。これらは LDAPオブ
-ジェクトを抽象化し、Rubyオブジェクトとして利用するためのインターフェースを提
-供します。
-
-ActiveLdap::Base を継承したクラスは、プログラマの利便性のために LDAP オブジェク
-トの属性情報を(ActiveRecordのように) Ruby クラスにマッピングします。これは自動で
-行われます。
+拡張クラスは LDAP オブジェクト群の属性情報を Ruby クラスに自動的にマッピングする
+ことで、オブジェクトの取り扱いを容易かつ便利にします。
 
 <wiki:comment>
   Special Methods
@@ -327,10 +326,10 @@ ActiveLdap::Base を継承したクラスは、プログラマの利便性のた
   extension class. In the above example, I only made one special method call
   inside the Group class. More than likely, you will want to more than that.
 </wiki:comment>
-LDAP オブジェクトがただしく Ruby オブジェクトにマッピングされるために、
-ActiveLdapのクラスメソッドを利用してマッピングのための情報を定義します。上記の例
-ではそれらのうち、Group クラスを定義する中で ldap_mapping だけを利用していまし
-た。必要に応じて更に多くのメソッドを利用することができます。
+LDAP オブジェクトが正しく Ruby オブジェクトにマッピングされるために、ActiveLdap
+のクラスメソッドを利用してマッピングのための情報を定義します。上記の例ではそれら
+のうち、Group クラスを定義する中で ldap_mapping だけを利用していました。必要に応
+じて更に多くのメソッドを利用することができます。
 
 <wiki:comment>
   ldap_mapping
@@ -341,8 +340,9 @@ ActiveLdapのクラスメソッドを利用してマッピングのための情�
   ldap_mapping is the only required method to setup an extension class for use
   with ActiveLdap. It must be called inside of a subclass as shown above.
 </wiki:comment>
-ldap_mapping は ActiveLdap とともに拡張クラスを利用するにあたって必須とされ
-る唯一のメソッドです。
+
+ldap_mapping は ActiveLdap とともに拡張クラスを利用するにあたって必須とされる唯
+一のメソッドです。
 
 <wiki:comment>
   Below is a much more realistic Group class:
@@ -352,7 +352,8 @@ ldap_mapping は ActiveLdap とともに拡張クラスを利用するにあた�
 {{{
   class Group < ActiveLdap::Base
     ldap_mapping :dn_attribute => 'cn',
-                 :prefix => 'ou=Groups', :classes => ['top', 'posixGroup']
+                 :prefix => 'ou=Groups',
+                 :classes => ['top', 'posixGroup']
                  :scope => :one
   end
 }}}
@@ -361,8 +362,10 @@ ldap_mapping は ActiveLdap とともに拡張クラスを利用するにあた�
   As you can see, this method is used for defining how this class maps in to
   LDAP. Let's say that my LDAP tree looks something like this:
 </wiki:comment>
-このメソッドが LDAPオブジェクト と Group クラスのマッピングを行っているのが見て
-取れるでしょう。私たちが扱う LDAP ツリーが以下のようなものであるとします。
+Group クラスをどのようにして LDAP とマッピングとするかを定義するために、
+ldap_mapping メソッドが使われていることが見てとれるでしょう。
+
+私たちが扱う LDAP ツリーが以下のようなものであるとします。
 
 {{{
   * dc=dataspill,dc=org
@@ -381,12 +384,17 @@ ldap_mapping は ActiveLdap とともに拡張クラスを利用するにあた�
   as the beginning of the distinguished name.
 </wiki:comment>
 ou=People 以下にはユーザオブジェクトを格納し、ou=Groups 以下にはグループオブジェ
-クトを格納するものとします。ldap_mapping は LDAP ツリーを抽象化してマッピングし
-ます。先の Group クラスの例だと :prefix によって、このクラスは
-ou=Groups,dc=dataspill,dc=org 以下のみを扱うようになります。また :dn_attribute
-により 'cn' がこのクラスにとってのプライマリ属性となります。つまり、Group クラス
-が取り扱う LDAPエントリ(ou=Groups,dc=dataspill,dc=org 以下のエントリ)について、
-DN はcn から始まるものとして扱われます。
+クトを格納するものとします。
+
+ldap_mapping は LDAP ツリーを抽象化して拡張クラスにマッピングします。先の Group
+クラスの例をとって説明します。
+
+:prefix によって、このクラスはou=Groups,dc=dataspill,dc=org 以下のみを扱うように
+なっています。
+
+:dn_attributeにより 'cn' がこのクラスにとってのプライマリ属性となります。つまり、
+Group クラスが取り扱う LDAPオブジェクト(ou=Groups,dc=dataspill,dc=org 以下のLDAP
+オブジェクト)について、DN はcn から始まるものとして扱われます。
 
 <wiki:comment>
   Just for clarity, here's how the arguments map out:
@@ -410,8 +418,9 @@ DN はcn から始まるものとして扱われます。
 他にも :scope, :classes, :dn_attribute といったオプションの引数があります。
 
 :scope は ou=Groups 以下の検索について、より深い階層までを検索するかどうかを指示
-します（cn=develop,ou=DevGroups,ou=Groups,dc=dataspill,dc=org のようなエントリの
-こと）
+します（cn=develop,ou=DevGroups,ou=Groups,dc=dataspill,dc=org のような LDAP オブ
+ジェクトのこと）。<wiki:comment>日本語版追記</wiki:comment> ここには、:base,
+:one, :sub といった引数を指定できます。
 
 <wiki:comment>
   Something's missing: :classes. :classes is used to tell ActiveLdap what
@@ -423,7 +432,7 @@ DN はcn から始まるものとして扱われます。
   method e.g. Group#add_class(*values).
 </wiki:comment>
 :classes は ActiveLdap に対して、新しいオブジェクトを生成するのに必要な最低
-条件を指示します。LDAP はオブジェクトクラスを利用して、LDAPオブジェクトがどのよ
+条件を指定します。LDAP はオブジェクトクラスを利用して、LDAPオブジェクトがどのよ
 うな属性を持ち得るかを定義します。ActiveLdap はこれを :classes 引数によって
 知ることになります。デフォルトは 'top' のみです。このままにすることもできます
 し、add_class メソッドなどによって追加することも可能です。
@@ -444,10 +453,12 @@ DN はcn から始まるものとして扱われます。
   defaults to super class's value or 'cn’. If :prefix is left off, it will
   default to 'ou=PLURALIZED_CLASSNAME’. In this case, it would be 'ou=Groups’.
 </wiki:comment>
-:classes だけがオプションの引数ではありません。もし :dn_attribute が無い場合、こ
-のデフォルトはスーパークラスと同じ値か、cn に設定されます。
-:prefixが無い場合、このデフォルトは'ou=クラス名の複数形’に設定されます。この場合
-は'ou=Groups'になります。
+
+:classes だけがオプションの引数ではありません。:dn_attribute が無い場合、このデ
+フォルトはスーパークラスと同じ値か、cn に設定されます。
+
+:prefixが無い場合、このデフォルトは'ou=クラス名の複数形’に設定されます。この場
+合は'ou=Groups'になります。
 
 <wiki:comment>
   :classes should be an Array. :dn_attribute should be a String and so should
@@ -463,9 +474,9 @@ DN はcn から始まるものとして扱われます。
   tying objects together across the LDAP tree. Often, user objects will be
   members of, or belong_to, Group objects.
 </wiki:comment>
-このメソッドはLDAPツリーを横断して、他の拡張クラスとの紐づけを行います。しばし
-ば、User オブジェクトはGroupオブジェクトのメンバとなり、belongs_to を利用して紐
-づけられます。
+このメソッドはLDAPツリーを横断して他の拡張クラスとの関連付けを行い、所属の表現を
+行います。しばしば User オブジェクトは Group オブジェクトのメンバとなるために
+belongs_to で所属の表現を行います。
 
 {{{
   * dc=dataspill,dc=org
@@ -495,14 +506,15 @@ DN はcn から始まるものとして扱われます。
   If we look at the LDAP entry for 'drewry’, we do not see any references to
   group 'develop’. In order to remedy that, we can use belongs_to
 </wiki:comment>
-しかしながら、私たちが 'drewry' のエントリを見た時に、'develop' グループと関連付
-けられていることは確認できないでしょう。これを解決するために belongs_to を利用し
-ます。
+しかし、'drewry' のエントリを見た時に 'develop' グループと関連している事は判らな
+いでしょう。これを解決するために belongs_to を利用します。
 
+<wiki:comment>日本語版で整理</wiki:comment>
 {{{
   irb> class User < ActiveLdap::Base
   irb*   ldap_mapping :dn_attribute => 'uid', :prefix => 'People', :classes => ['top','account']
-  irb*   belongs_to :groups, :class_name => 'Group', :many => 'memberUid', :foreign_key => 'uid'
+  irb*   belongs_to :groups,  :foreign_key => 'uid', 
+  irb*                :class_name => 'Group', :many => 'memberUid',
   irb* end
 }}}
 
@@ -554,43 +566,67 @@ Group の Distinguished name の属性名を知らなければ、以下のよう
   assumed to be the dn_attribute. With this in mind, the above definition could
   become:
 </wiki:comment>
-belongs_to の引数について説明します。
+belongs_to の引数について説明します。<wiki:comment>日本語版追記</wiki:comment>理
+解の助けのため、先ほどの Group クラスを少し拡張した以下のコードを例にとって説明
+します。
 
-最初の引数は造りたいメソッドの名前を指定します。この例ではシンボル :groups を指
-定することによって groups メソッドが作成されました。次以降の引数は実際には Hash
-です（ldap_mapping のように）。
-
-:class_name キーは所属先のLDAPエントリのクラス名を String で指定します（この例の場合、
-User のインスタンスが所属するのは Group クラスのインスタンスとなるため、'Group'
-と指定します）。もし拡張クラスが Ruby におけるモジュールやクラスの中に定義されてい
-る場合、:class_name => "MyLdapModule::Group" のようにトップレベルから全ての名前を記載
-してください。
-
-:foreign_key は所属する側のLDAPオブジェクトの属性名を指定します。ここに設定した
-属性名が、所属のキーとなります。:foreign_key に何も設定しないと、自動的に
-:dn_attributeにした属性名が利用されます。
-
-:many は所属先が複数のLDAPオブジェクトにわたる場合に利用します。:foreign_key に
-指定した属性に対応する、所属先のLDAPエントリの属性名を設定します。上記の例では
-:foreign_key に uid、:many に memberUid といった具合です。（訳注：RDBでの外部
-キーと同様に考えると混乱するかもしれません。こういったものだと考えてください。
-:foreign_keyは自身の属性を指定するという原則からこうなっています。）
-
-:primary_key は所属先がただひとつのLDAPオブジェクトである場合に利用します。
-gidNumber に指定するような、プライマリの所属グループなどがこれに該当するでしょ
-う。
-
+<wiki:comment>日本語版で追加</wiki:comment>
 {{{
   irb> class User < ActiveLdap::Base
   irb*   ldap_mapping :dn_attribute => 'uid', :prefix => 'People', :classes => ['top','account']
-  irb*   belongs_to :groups, :class_name => 'Group', :many => 'memberUid'
+  irb*
+  irb*   belongs_to :primary_group, :foreign_key => 'gidNumber',
+  irb*                :class_name => 'Group', :primary_key => 'gidNumber'
+  irb*
+  irb*   belongs_to :groups,  :foreign_key => 'uid', 
+  irb*                :class_name => 'Group', :many => 'memberUid',
   irb* end
 }}}
+
+belongs_to の最初の引数は造りたいメソッドの名前を指定します。この例ではシンボル:
+primary_group と :groups を指定して、同名のメソッドを作成しています。次以降の引
+数は実際には Hashです（ldap_mapping のように）。<wiki:comment>日本語版追記
+</wiki:comment>このメソッドにアクセスすると所属先の Group のオブジェクト群にアク
+セスできるようになります。
+
+:class_name キーは所属先拡張クラスの名前を String で指定します。この例では
+"Group" と指定します。もし拡張クラスがどこかのモジュールやクラスの中に定義されて
+いる場合、:class_name => "MyLdapModule::Group" のようにトップレベルから全ての名
+前を記載してください。
+
+:foreign_key には RDB と同様に、外部キーとなる自身の属性名を指定します。
+:foreign_keyに何も設定しないと、自動的に :dn_attribute の属性名が利用されます。
+
+<wiki:comment>日本語版で以下大幅に変えています</wiki:comment>ActiveRecord を利用
+していた人たちで、もっとも戸惑いやすいのが以下の :many と :primary_key の説明で
+しょう。先ずは多くの人に馴染み深い :primary_key について説明します。
+
+:primary_key は :foreign_key の参照先属性名を指定します。この属性名は、
+:class_name で指定した拡張クラスのインスタンスで利用できる属性名です。上記の例で
+は、プライマリの所属グループにアクセスするためのメソッドを、:primary_group とし
+て作成しました。primary_group メソッドにアクセスすると User の属性 gidNumberの値
+で Grop クラスの属性 gidNumber を検索し、マッチする最初のオブジェクトを探しま
+す。
+
+:many は :primary_key と同等の意味を持ち、利用方法も :primary_key と同様です。例
+では所属している全てのGroupオブジェクトを取得するメソッドを :groups として作成し
+ています。:primary_key との違いは一点だけです。
+
+RDB では、外部キーの参照先が複数のタプルを指すことはありません。一方 LDAP では外
+部キーの参照先が複数になる場合があります。例で挙げている User と Group の関係は
+代表的な例です。
+
+外部キーの参照先が複数のオブジェクトになる場合は内部的な動作が変わります。 :many
+はこの区別をつけるために使います。
+
+まとめると、:foreign_key の参照先がただ一つのオブジェクトである場合は
+:primary_key を利用してください。参照先が複数のオブジェクトにまたがる場合は
+:many を使ってください。
 
 <wiki:comment>
   In addition, you can do simple membership tests by doing the following:
 </wiki:comment>
-加えて、メンバーシップテストも下記のように実施できます。
+尚、:many を利用していると、メンバーシップテストも下記のように行えます。
 
 {{{
   irb> me.groups.member? 'root'
@@ -682,7 +718,7 @@ has_many の引数は belongs_to とまったく同じ形式をとります。�
   query. This is the simplest example of .find.
 </wiki:comment>
 .find は ldap_mapping をコール済みの拡張クラスのクラスメソッドです。ActiveRecord
-のようにLDAPエントリを検索可能です。
+のようにLDAPオブジェクトを検索可能です。
 
 文字列を与えると、dn_attribute をキーにして最初にマッチするオブジェクトを返しま
 す。
@@ -1002,7 +1038,7 @@ ActiveLdap は幾つかのカスタマイズした例外クラスを扱います
   This exception is raised when delete fails. It will include LDAP error
   information that was passed up during the error.
 </wiki:comment>
-LDAPエントリの削除に失敗した際、この例外が発生します。エラー発生時の LDAP エ
+LDAPオブジェクトの削除に失敗した際、この例外が発生します。エラー発生時の LDAP エ
 ラーメッセージが含まれます。
 
 === SaveError ===
@@ -1013,9 +1049,9 @@ LDAPエントリの削除に失敗した際、この例外が発生します。�
   logs or doing an Ethereal dump of the connection will often provide better
   insight.
 </wiki:comment>
-LDAP エントリの追加または更新に問題があった場合に発生する例外です。LDAPサーバの
-ログや Ethereal などによる通信解析によってより詳しい情報が得られるかもしれませ
-ん。
+LDAP オブジェクトの追加または更新に問題があった場合に発生する例外です。LDAPサー
+バのログや Ethereal などによる通信解析によってより詳しい情報が得られるかもしれま
+せん。
 
 === AuthenticationError ===
 
