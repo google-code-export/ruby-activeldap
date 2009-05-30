@@ -583,8 +583,8 @@ belongs_to の引数について説明します。<wiki:comment>日本語版追�
   irb* end
 }}}
 
-belongs_to の最初の引数は造りたいメソッドの名前を指定します。この例ではシンボル:
-primary_group と :groups を指定して、同名のメソッドを作成しています。次以降の引
+belongs_to の最初の引数は造りたいメソッドの名前を指定します。この例ではシンボル
+:primary_group と :groups を指定して、同名のメソッドを作成しています。次以降の引
 数は実際には Hashです（ldap_mapping のように）。<wiki:comment>日本語版追記
 </wiki:comment>このメソッドにアクセスすると所属先の Group のオブジェクト群にアク
 セスできるようになります。
@@ -594,8 +594,14 @@ primary_group と :groups を指定して、同名のメソッドを作成して
 いる場合、:class_name => "MyLdapModule::Group" のようにトップレベルから全ての名
 前を記載してください。
 
-:foreign_key には RDB と同様に、外部キーとなる自身の属性名を指定します。
-:foreign_keyに何も設定しないと、自動的に :dn_attribute の属性名が利用されます。
+:foreign_key には、関連のキーとなる自身の属性名を指定します。:foreign_keyに何も
+設定しないと、自動的に :dn_attribute の属性名が利用されます。
+
+例で、:foreign_key に uid を指定していた事に違和感を覚えた方がいたかもしれませ
+ん。ActiveLdap での :foreign_key には "自身が持つ属性名を指定する”という規約が
+あります。このため、必ずしも名前通りの”外部キー”とはならない場合があります。
+belongs_to における :foreign_key は、単に所属の関連性を示すためのキーにすぎない
+と考えた方が良いかも知れません。
 
 <wiki:comment>日本語版で以下大幅に変えています</wiki:comment>ActiveRecord を利用
 していた人たちで、もっとも戸惑いやすいのが以下の :many と :primary_key の説明で
