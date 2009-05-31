@@ -575,10 +575,6 @@ belongs_to の引数について説明します。<wiki:comment>日本語版追�
 class User < ActiveLdap::Base
   ldap_mapping :dn_attribute => 'uid', :prefix => 'People', :classes => ['top','account']
 
-  # プライマリで所属しているグループを取得する
-  belongs_to :primary_group, :foreign_key => 'gidNumber',
-               :class_name => 'Group', :primary_key => 'gidNumber'
-
   # 所属しているグループ全てを取得する
   belongs_to :groups,  :foreign_key => 'uid', 
                :class_name => 'Group', :many => 'memberUid',
@@ -586,10 +582,9 @@ end
 }}}
 
 belongs_to の最初の引数は造りたいメソッドの名前を指定します。この例ではシンボル
-:primary_group と :groups を指定して、同名のメソッドを作成しています。次以降の引
-数は実際には Hashです（ldap_mapping のように）。<wiki:comment>日本語版追記
-</wiki:comment>このメソッドにアクセスすると所属先の Group のオブジェクト群にアク
-セスできるようになります。
+:groups を指定して、同名のメソッドを作成しています。次以降の引数は実際には Hashで
+す（ldap_mapping のように）。<wiki:comment>日本語版追記</wiki:comment>このメソッ
+ドにアクセスすると所属先の Group のオブジェクト群にアクセスできるようになります。
 
 :class_name キーは所属先拡張クラスの名前を String で指定します。この例では
 "Group" と指定します。もし拡張クラスがどこかのモジュールやクラスの中に定義されて
