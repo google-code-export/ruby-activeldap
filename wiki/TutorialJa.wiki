@@ -696,11 +696,12 @@ has_many の引数は belongs_to とまったく同じ形式をとります。�
 :class_name も同様です。この拡張クラスのインスタンスに所属するオブジェクトのクラス名
 を Stringで記載します。
 
-:wrap と :foreign_key には自身の属性名を指定します。これがメンバの関係性のキーに
-なります。ここで指定された属性の値で :class_name で指定した拡張クラスで
-:primary_key を検索します。 これはちょうど、 belongs_to における :primary_key と
-:many の関係と同じです。ここでも :foreign_key は”自身の属性名を指定する”という
-規約があるため、RDB における外部キーと同義にはならない場合があります。
+:wrap には自身の属性名を指定します。これがメンバの関係性のキーになります。
+:class_name で指定した拡張クラスの :primary_key を :wrap で指定した属性の値を用
+いて検索します。 マッチした User のオブジェクトが所属していると扱われます。
+
+:primary_key が指定されない場合、:class_name に指定されたクラスの :dn_attribute
+が利用されます。
 
 <wiki:comment>
   Using these new classes
