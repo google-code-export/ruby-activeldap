@@ -572,15 +572,17 @@ belongs_to の引数について説明します。<wiki:comment>日本語版追�
 
 <wiki:comment>日本語版で追加</wiki:comment>
 {{{
-  irb> class User < ActiveLdap::Base
-  irb*   ldap_mapping :dn_attribute => 'uid', :prefix => 'People', :classes => ['top','account']
-  irb*
-  irb*   belongs_to :primary_group, :foreign_key => 'gidNumber',
-  irb*                :class_name => 'Group', :primary_key => 'gidNumber'
-  irb*
-  irb*   belongs_to :groups,  :foreign_key => 'uid', 
-  irb*                :class_name => 'Group', :many => 'memberUid',
-  irb* end
+class User < ActiveLdap::Base
+  ldap_mapping :dn_attribute => 'uid', :prefix => 'People', :classes => ['top','account']
+
+  # プライマリで所属しているグループを取得する
+  belongs_to :primary_group, :foreign_key => 'gidNumber',
+               :class_name => 'Group', :primary_key => 'gidNumber'
+
+  # 所属しているグループ全てを取得する
+  belongs_to :groups,  :foreign_key => 'uid', 
+               :class_name => 'Group', :many => 'memberUid',
+end
 }}}
 
 belongs_to の最初の引数は造りたいメソッドの名前を指定します。この例ではシンボル
@@ -597,11 +599,11 @@ belongs_to の最初の引数は造りたいメソッドの名前を指定しま
 :foreign_key には、関連のキーとなる自身の属性名を指定します。:foreign_keyに何も
 設定しないと、自動的に :dn_attribute の属性名が利用されます。
 
-例で、:foreign_key に uid を指定していた事に違和感を覚えた方がいたかもしれませ
-ん。ActiveLdap での :foreign_key には "自身が持つ属性名を指定する”という規約が
-あります。このため、必ずしも名前通りの”外部キー”とはならない場合があります。
-belongs_to における :foreign_key は、単に所属の関連性を示すためのキーにすぎない
-と考えた方が良いかも知れません。
+例で、:foreign_key に uid を指定していた事に違和感を覚えたかもしれません。
+ActiveLdap での :foreign_key には "自身の属性名を指定する”という規約があります。
+このため、必ずしも名前通りの”外部キー”とはならない場合があります。belongs_to
+における :foreign_key は、単に所属の関連性を示すためのキーにすぎないと考えた方が
+良いかも知れません。
 
 <wiki:comment>日本語版で以下大幅に変えています</wiki:comment>ActiveRecord を利用
 していた人たちで、もっとも戸惑いやすいのが以下の :many と :primary_key の説明で
@@ -654,19 +656,26 @@ RDB では、外部キーの参照先が複数のタプルを指すことはあ�
 とは逆のことをします。
 
 {{{
-  class Group < ActiveLdap::Base
-    ldap_mapping :dn_attribute => 'cn', :prefix => 'ou=Groups', :classes => ['top', 'posixGroup']
-    has_many :members, :class_name => "User", :wrap => "memberUid", :primary_key => 'uid'
-  end
+class Group < ActiveLdap::Base
+  ldap_mapping :dn_attribute => 'cn', :prefix => 'ou=Groups', :classes => ['top', 'posixGroup']
+
+  # プライマリで所属しているユーザ群を取得する
+  has_many :primary_members, :foreign_key => 'gidNumber',
+            :class_name => "User", :primary_key => 'gidNumber'
+
+  # 所属しているユーザを全て(memberUidによって)取得する
+  has_many :members,  :wrap => "memberUid",
+            :class_name => "User",  :primary_key => 'uid'
+end
 }}}
 
 <wiki:comment>
   Now we can see that group develop has user 'drewry’ as a member, and it can
   even return all responses in object form just like belongs_to methods.
 </wiki:comment>
-これで develop グループが 'drewry' ユーザをメンバーとして見ることができます。そ
-して belongs_to のようにメンバーのリストを members メソッドによって取得すること
-ができます。
+これで develop グループが 'drewry' ユーザをメンバーとして見ることができます。
+belongs_to のように、メンバーのリストを members メソッドによって取得することがで
+きます。
 
 {{{
   irb> develop = Group.find('develop')
@@ -687,11 +696,11 @@ has_many の引数は belongs_to とまったく同じ形式をとります。�
 :class_name も同様です。この拡張クラスのインスタンスに所属するオブジェクトのクラス名
 を Stringで記載します。
 
-:wrap の内容は :primary_key の内容を検索するために使われます。:primary_key は所
-属するオブジェクトを探すためのキーとする属性名です。:class_name の:primary_key が
-:wrap の内容で検索され、マッチしたものがリストされます。
-:primary_key が指定されない場合、:class_name に指定されたクラスの :dn_attribute が利
-用されます。
+:wrap と :foreign_key には自身の属性名を指定します。これがメンバの関係性のキーに
+なります。ここで指定された属性の値で :class_name で指定した拡張クラスで
+:primary_key を検索します。 これはちょうど、 belongs_to における :primary_key と
+:many の関係と同じです。ここでも :foreign_key は”自身の属性名を指定する”という
+規約があるため、RDB における外部キーと同義にはならない場合があります。
 
 <wiki:comment>
   Using these new classes
