@@ -475,8 +475,8 @@ Group クラスが取り扱う LDAPオブジェクト(ou=Groups,dc=dataspill,dc=
   members of, or belong_to, Group objects.
 </wiki:comment>
 このメソッドはLDAPツリーを横断して他の拡張クラスとの関連付けを行い、所属の表現を
-行います。しばしば User オブジェクトは Group オブジェクトのメンバとなるために
-belongs_to で所属の表現を行います。
+行います。しばしば User オブジェクトは Group オブジェクトのメンバになったり、所
+属したりします。
 
 {{{
   * dc=dataspill,dc=org
@@ -575,56 +575,53 @@ belongs_to の引数について説明します。<wiki:comment>日本語版追�
 class User < ActiveLdap::Base
   ldap_mapping :dn_attribute => 'uid', :prefix => 'People', :classes => ['top','account']
 
-  # 所属しているグループ全てを取得する
-  belongs_to :groups,  :foreign_key => 'uid', 
+  # プライマリで所属しているグループと関連付け
+  belongs_to :primary_group, :foreign_key => 'gidNumber',
+               :class_name => 'Group', :primary_key => 'gidNumber'
+
+  # 所属しているグループ全てと関連付け
+  belongs_to :groups,  :foreign_key => 'uid',
                :class_name => 'Group', :many => 'memberUid',
 end
 }}}
 
-belongs_to の最初の引数は造りたいメソッドの名前を指定します。この例ではシンボル
-:groups を指定して、同名のメソッドを作成しています。次以降の引数は実際には Hashで
-す（ldap_mapping のように）。<wiki:comment>日本語版追記</wiki:comment>このメソッ
-ドにアクセスすると所属先の Group のオブジェクト群にアクセスできるようになります。
+belongs_to の最初の引数は造りたいメソッドの名前を Symbol で指定します。ここでは、
+primary_group メソッドと groups メソッドを作成しています。次以降の引数は実際には
+Hashです（ldap_mapping のように）。
 
-:class_name キーは所属先拡張クラスの名前を String で指定します。この例では
-"Group" と指定します。もし拡張クラスがどこかのモジュールやクラスの中に定義されて
-いる場合、:class_name => "MyLdapModule::Group" のようにトップレベルから全ての名
-前を記載してください。
+:foreign_key には、関連のキー値を持つ、自身の属性名を指定します。:foreign_keyに
+何も設定しないと、自動的に ldap_mapping で指定した :dn_attribute の属性名が利用
+されます。
 
-:foreign_key には、関連のキーとなる自身の属性名を指定します。:foreign_keyに何も
-設定しないと、自動的に :dn_attribute の属性名が利用されます。
+  例では :foreign_key に uid を指定していますが、これに違和感を覚えたかもしれま
+  せん。
 
-例で、:foreign_key に uid を指定していた事に違和感を覚えたかもしれません。
-ActiveLdap での :foreign_key には "自身の属性名を指定する”という規約があります。
-このため、必ずしも名前通りの”外部キー”とはならない場合があります。belongs_to
-における :foreign_key は、単に所属の関連性を示すためのキーにすぎないと考えた方が
-良いかも知れません。
+  ActiveLdapでの :foreign_key には "自身の属性名を指定する”という規約がありま
+  す。このため、必ずしも名前通りの”外部キー”とはならない場合があります。
+  belongs_toにおける :foreign_key は、単に所属の関連性を示すためのキーにすぎない
+  と考えた方が良いかも知れません。
 
-<wiki:comment>日本語版で以下大幅に変えています</wiki:comment>ActiveRecord を利用
-していた人たちで、もっとも戸惑いやすいのが以下の :many と :primary_key の説明で
-しょう。先ずは多くの人に馴染み深い :primary_key について説明します。
+:class_name キーには、所属先となるオブジェクトの拡張クラス名を、 String で指定し
+ます。もし拡張クラスがモジュールやクラスの中に定義されている場合、:class_name =>
+"MyLdapModule::Group" のようにトップレベルから全ての名前を記載してください。この
+例では "Group" クラスを指定しています。
 
-:primary_key は :foreign_key の参照先属性名を指定します。この属性名は、
-:class_name で指定した拡張クラスのインスタンスで利用できる属性名です。上記の例で
-は、プライマリの所属グループにアクセスするためのメソッドを、:primary_group とし
-て作成しました。primary_group メソッドにアクセスすると User の属性 gidNumberの値
-で Grop クラスの属性 gidNumber を検索し、マッチする最初のオブジェクトを探しま
-す。
+ActiveRecord を利用していた人たちで、もっとも戸惑いやすいのが :many と
+:primary_key の説明でしょう。両方とも似た意味を持ちます。どちらも、:foreign_key
+の参照先属性名を指定します。指定する属性名は :class_name で指定した拡張クラスの
+インスタンスで利用できる属性名です。
 
-:many は :primary_key と同等の意味を持ち、利用方法も :primary_key と同様です。例
-では所属している全てのGroupオブジェクトを取得するメソッドを :groups として作成し
-ています。:primary_key との違いは一点だけです。
+所属の関連付けは、:foreign_key に指定した属性の値で、 :class_name に指定のクラス
+で扱うオブジェクト群を検索することによって行われます。この際の検索対象属性が
+:primary_key または :many に指定の属性です。例で定義した parimary_group メソッド
+で言えば、User オブジェクトの gidNumber の値で、 Groupオブジェクト群の属性
+gidNumber を検索します。マッチした Group オブジェクトが所属先となります。
 
-RDB では、外部キーの参照先が複数のタプルを指すことはありません。一方 LDAP では外
-部キーの参照先が複数になる場合があります。例で挙げている User と Group の関係は
-代表的な例です。
+:parimary_key は所属先がただ一つの場合に利用します。検索の結果、最初にマッチした
+もののみが所属先として扱われます。
 
-外部キーの参照先が複数のオブジェクトになる場合は内部的な動作が変わります。 :many
-はこの区別をつけるために使います。
-
-まとめると、:foreign_key の参照先がただ一つのオブジェクトである場合は
-:primary_key を利用してください。参照先が複数のオブジェクトにまたがる場合は
-:many を使ってください。
+:many は所属先が複数の場合に利用します。検索の結果マッチしたすべてのオブジェクト
+が所属先として扱われます。
 
 <wiki:comment>
   In addition, you can do simple membership tests by doing the following:
@@ -654,11 +651,11 @@ RDB では、外部キーの参照先が複数のタプルを指すことはあ�
 class Group < ActiveLdap::Base
   ldap_mapping :dn_attribute => 'cn', :prefix => 'ou=Groups', :classes => ['top', 'posixGroup']
 
-  # プライマリで所属しているユーザ群を取得する
+  # プライマリで所属しているユーザ群と関連付け
   has_many :primary_members, :foreign_key => 'gidNumber',
             :class_name => "User", :primary_key => 'gidNumber'
 
-  # 所属しているユーザを全て(memberUidによって)取得する
+  # 所属しているユーザ全てと関連付け
   has_many :members,  :wrap => "memberUid",
             :class_name => "User",  :primary_key => 'uid'
 end
@@ -688,15 +685,20 @@ belongs_to のように、メンバーのリストを members メソッドによ
 has_many の引数は belongs_to とまったく同じ形式をとります。つまり第一引数に実装
 するメソッド名を Symbol で渡し、続く引数は Hash です。
 
-:class_name も同様です。この拡張クラスのインスタンスに所属するオブジェクトのクラス名
-を Stringで記載します。
+:class_name、:parimary_key の意味合いも belongs_to と同様で、相手先の拡張クラス
+名と参照先の属性名を指定します。また has_many に :many はありません。
 
-:wrap には自身の属性名を指定します。これがメンバの関係性のキーになります。
-:class_name で指定した拡張クラスの :primary_key を :wrap で指定した属性の値を用
-いて検索します。 マッチした User のオブジェクトが所属していると扱われます。
+has_many の場合、:foreign_key か :wrap のいずれかで、自身の属性名を指定します。
 
-:primary_key が指定されない場合、:class_name に指定されたクラスの :dn_attribute
-が利用されます。
+:foreign_key で属性名を指定した場合、has_many は単純に :class_name のクラスに対
+して検索を行い、マッチしたオブジェクト群を所有オブジェクト群として扱います。
+
+:wrap の概念は”:wrap に指定した属性に保持する値をオブジェクト化する”ことです。
+
+:wrap に指定する属性は、memberUid のように一つ以上の値を持つことを想定しています。
+この属性に保持する全ての値で検索し、マッチする全てのオブジェクトを返します。マッ
+チしない値がある場合、:class_name に指定の拡張クラスで new され、所有対象のリス
+トに含まれます。
 
 <wiki:comment>
   Using these new classes
@@ -1750,7 +1752,7 @@ IRBでタブ補完機能を有効にしている場合、属性アクセサメ�
 <wiki:comment>
   Don't be afraid! [Internals]
 </wiki:comment>
-=== 恐れないでください！ ===
+=== こわがらないでください！ ===
 
 <wiki:comment>
   Don't be afraid to add more methods to the extensions classes and to
