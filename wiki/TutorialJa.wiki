@@ -585,7 +585,7 @@ class User < ActiveLdap::Base
 end
 }}}
 
-belongs_to の最初の引数は造りたいメソッドの名前を Symbol で指定します。ここでは、
+belongs_to の最初の引数は作りたいメソッドの名前を Symbol で指定します。ここでは、
 primary_group メソッドと groups メソッドを作成しています。次以降の引数は実際には
 Hashです（ldap_mapping のように）。
 
