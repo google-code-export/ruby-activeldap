@@ -990,7 +990,7 @@ Group のような、Base を親に持つサブクラスをコールした際、
  * :password にはパスワードの文字列を指定します
  * :store_password には真偽値を設定します。再接続の際に :password_block で指定したブロックを再実行するかどうかが決定されます。このキーが存在する場合、password_block の実行結果は保存され、ブロックが再実行されることはありません
  * :allow_anonymous は接続の際、バインドに失敗した場合、匿名で接続することを許可します
- * :try_ssl が true の場合、SASL-GSSAPI バインドを試みます
+ * :try_sasl が true の場合、SASL-GSSAPI バインドを試みます
  * :sasl_quiet が true の場合、SASL ライブラリが STDOUT にメッセージを吐かないよう指示します
  * :method は接続方式の指定です。:ssl, :tls または :plain を指定します
  * :retry_limit は接続失敗時に、何回再接続を試みるかを数値で指定します。-1 を指定すると無限に再接続を試みます
