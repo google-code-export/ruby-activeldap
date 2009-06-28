@@ -1,5 +1,3 @@
-# 推敲中
-
 <wiki:comment>
   Introduction
 </wiki:comment>
@@ -247,7 +245,7 @@ setup_connection を利用します。サンプルとして、接続先は local
 "dc=dataspill,dc=org" とします。
 
 {{{
-  ActiveLdap::Base.setup_connection :host => 'localhost', :base => 'dc=dataspill,dc=org'
+  irb> ActiveLdap::Base.setup_connection :host => 'localhost', :base => 'dc=dataspill,dc=org'
 }}}
 
 <wiki:comment>
