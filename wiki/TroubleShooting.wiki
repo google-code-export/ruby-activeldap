@@ -38,6 +38,17 @@ production:
 
 Note that "port: 636" is optional if you are using ActiveLdap >= 1.0.2 or trunk. In the version, ActiveLdap guesses suitable port number from "method" configuration.
 
+= How to access createTimeStamp =
+
+Pass "+" as :attributes value:
+
+{{{
+entries = Entry.find(:all, :attributes => ["+", "*"])
+entries.each do |entry|
+  p entry.create_timestamp
+end
+}}}
+
 = Next problem... =
 
 The answer of this problem...
