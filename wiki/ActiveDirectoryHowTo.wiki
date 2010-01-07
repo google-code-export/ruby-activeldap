@@ -1,0 +1,168 @@
+#summary How to connect to Active Directory
+
+= Introduction =
+
+At it's core, Active Directory is just another LDAP Server.
+Connecting to it is as easy.
+
+This tutorial shows you how.
+
+= Details =
+
+== Active Directory Requirements ==
+
+=== Locating the Domain Controller or Global Address List Server ===
+
+You might have to poke around your network a bit, but you need to find a server listening on TCP port 389.
+
+You can do this by telnetting to the suspected server and see if you get this response:
+
+{{{
+~$ telnet 172.31.0.8 389
+Trying 172.31.0.8...
+Connected to 172.31.0.8.
+Escape character is '^]'.
+ 
+ 
+}}}
+
+If the socket opens, you are in business.
+This will be the LDAP server you will configure later on.
+
+You need to keep looking if you get the following error:
+
+{{{
+~$ telnet 172.31.0.7 389
+Trying 172.31.0.7...
+telnet: Unable to connect to remote host: Connection refused
+
+}}}
+
+=== Determining the BaseDN for Active Directory ===
+
+Active Directory requires DNS, and this provides a handy clue on reverse engineering the BaseDN for LDAP.
+
+If my FQDN for my domain is:
+
+{{{
+ contorso.com
+
+}}}
+
+Then my BaseDN will be as follows:
+
+{{{
+ DC=contorso,DC=com
+}}}
+
+== Required Gems ==
+
+Make sure you have the activeldap gem installed by issuing the following command:
+
+{{{
+ sudo gem install activeldap
+}}}
+
+== Connect to Active Directory ==
+
+Create a new Rails project:
+
+{{{
+~/rails/$ rails activedirectory
+      create  
+      create  app/controllers
+      create  app/helpers
+      create  app/models
+      create  app/views/layouts
+      create  config/environments
+      create  config/initializers
+      create  config/locales
+      create  db
+      create  doc
+      create  lib
+      create  lib/tasks
+      create  log
+      create  public/images
+      ..
+}}}
+
+Change to the directory:
+
+{{{ 
+~/rails$ cd activedirectory
+}}}
+
+Generate a new activeldap scaffold:
+
+{{{
+~/rails/activedirectory$ ./script/generate scaffold_active_ldap
+      create  config/ldap.yml
+}}}
+
+Edit your *config/environment.rb* file and *`require 'active_ldap'`*. Here is an example config: 
+
+{{{
+RAILS_GEM_VERSION = '2.3.5' unless defined? RAILS_GEM_VERSION
+require File.join(File.dirname(__FILE__), 'boot')
+Rails::Initializer.run do |config|
+  require 'active_ldap'
+  config.time_zone = 'UTC'
+end
+
+}}}
+
+Edit your *config/ldap.yml* script and fill in the relevant details:
+
+{{{
+development:
+  host: 172.31.0.8
+  base: DC=contorso,DC=com
+  bind_dn: 'CONTORSO\joe.blogs'
+  password: <your password>
+
+
+}}}
+
+That's it. We now move on to creating the model.
+
+== Creating a Users Model ==
+
+As we are going to be using LDAP as a backend and not ActiveRecord, we can use the `generate` script, without a migration:
+
+{{{
+~/rails/activedirectory$ ./script/generate model --skip-migration user
+      exists  app/models/
+      exists  test/unit/
+      exists  test/fixtures/
+      create  app/models/user.rb
+      create  test/unit/user_test.rb
+      create  test/fixtures/users.yml
+~/rails/activedirectory$ 
+
+}}}
+
+Next, we have to edit the users model and tell it about ActiveLDAP.
+An example is provided:
+
+{{{
+class User < ActiveLdap::Base
+  ldap_mapping :dn_attribute => 'cn'
+end
+
+}}}
+
+Done!
+
+You should be able to instantiate your User object.
+
+=== Running the app ===
+
+Test your newly created Rails / Active Directory integration by:
+
+{{{
+~/rails/activedirectory$ ./script/console 
+Loading development environment (Rails 2.3.5)
+>> User.all("joe*")
+
+
+}}}
