@@ -23,7 +23,6 @@ Trying 172.31.0.8...
 Connected to 172.31.0.8.
 Escape character is '^]'.
  
- 
 }}}
 
 If the socket opens, you are in business.
@@ -105,7 +104,7 @@ Edit your *config/environment.rb* file and *`require 'active_ldap'`*. Here is an
 RAILS_GEM_VERSION = '2.3.5' unless defined? RAILS_GEM_VERSION
 require File.join(File.dirname(__FILE__), 'boot')
 Rails::Initializer.run do |config|
-  require 'active_ldap'
+  require 'activeldap', :lib => 'active_ldap'
   config.time_zone = 'UTC'
 end
 
@@ -130,7 +129,7 @@ That's it. We now move on to creating the model.
 As we are going to be using LDAP as a backend and not ActiveRecord, we can use the `generate` script, without a migration:
 
 {{{
-~/rails/activedirectory$ ./script/generate model --skip-migration user
+~/rails/activedirectory$ ./script/generate model_active_ldap user
       exists  app/models/
       exists  test/unit/
       exists  test/fixtures/
