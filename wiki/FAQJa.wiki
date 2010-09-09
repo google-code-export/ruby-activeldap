@@ -1,0 +1,24 @@
+#summary One-sentence summary of this page.
+
+= Introduction =
+
+建設予定地
+
+= ActiveLdap について =
+== どういう場合に ActiveLdap を利用すべきですか？ ==
+== ActiveDirectory に利用できますか？ ==
+== Ruby 1.9 に対応していますか？ ==
+== Rails 3 に対応していますか？ ==
+== 100万件単位のエントリを扱えますか？ ==
+
+= LDAP について =
+== 情報源はありますか？ ==
+== スキーマをどうやって作りますか？ ==
+
+
+= Details =
+
+Add your content here.  Format your content with:
+  * Text in *bold* or _italic_
+  * Headings, paragraphs, and lists
+  * Automatic links to other wiki pages
