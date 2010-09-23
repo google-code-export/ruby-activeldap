@@ -38,6 +38,6 @@ LDAP エントリからの情報取得や更新などをせずに認証のみ行
 
 == スキーマをどうやって作りますか？ ==
 
-!OpenLDAP であれば、通常は /etc/openldap/schemas ディレクトリ以下にスキーマ定義があります。
+OpenLDAP であれば、通常は /etc/openldap/schemas ディレクトリ以下にスキーマ定義があります。
 
-!OpenLDAP におけるスキーマの作り方は !OpenLDAP の [http://www.openldap.org/doc/admin24/ Administrator's Guide] の 13.Schema Specification をご参照ください（参照先は OpenLDAP 2.4 のドキュメントです）。必要に応じ、RFC も役立つことでしょう。
+OpenLDAP におけるスキーマの作り方は OpenLDAP の [http://www.openldap.org/doc/admin24/ Administrator's Guide] の 13.Schema Specification をご参照ください（参照先は OpenLDAP 2.4 のドキュメントです）。必要に応じ、RFC も役立つことでしょう。
