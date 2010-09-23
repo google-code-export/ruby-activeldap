@@ -1,39 +1,36 @@
-#summary One-sentence summary of this page.
+= ActiveLdap 日本語 FAQ =
 
-= Introduction =
+== Introduction ==
 
 建設中
 
-= ActiveLdap について =
-== どういう場合に ActiveLdap を利用すべきですか？ ==
+== ActiveLdap について ==
+=== どういう場合に ActiveLdap を利用すべきですか？ ===
 LDAP エントリからの情報取得や更新などをせずに認証のみ行いたい場合などは、Ruby/LDAP や Net::LDAP で十分な場合がもあるでしょう。
 
 ActiveLdap が特に有効なのは、Rails と連携する時や、LDAP エントリにビジネスロジックを持たせたい場合でしょう。ActiveRecord 由来のコールバックやバリデーションが備わっており、エラーハンドリングも比較的容易です。
 
-== ActiveDirectory に利用できますか？ ==
+=== ActiveDirectory に利用できますか？ ===
 はい。利用できます。
 
-== Ruby 1.9 に対応していますか？ ==
+=== Ruby 1.9 に対応していますか？ ===
 1.0.9 以上で対応しています。
 
-== Rails 3 に対応していますか？ ==
+=== Rails 3 に対応していますか？ ===
 現時点（2010-09-14 最新版 1.2.2）では未対応です。現在対応作業を進めています。
 
-== 100万件単位のエントリを扱えますか？ ==
-扱う、の定義によります。
-
+=== 100万件単位のエントリを扱えますか？ ===
 数件～百件程度の LDAP エントリを検索によって取得して、ActiveLdap のオブジェクトにするという事であれば、十分に動くと思います。検索対象が100万件であっても、実際に検索を行うのは LDAP サーバ側ですから、その検索速度などは LDAP サーバの能力によるでしょう。
 
 もし万を超える単位の LDAP エントリを ActiveLdap のオブジェクトとして扱いたいと言う事であれば、おそらくはアプリケーションの設計を見直した方がよいでしょう。
 
-= LDAP について =
-== 情報源はありますか？ ==
-== スキーマをどうやって作りますか？ ==
+== LDAP について ==
 
+=== 情報源はありますか？ ===
+インターネット上に公開されている情報源で言うと、全体感をもって解説しているのは RFC でしょう。RFC4510 が LDAP 技術使用文書のロードマップです(2010-09-23 現在)。大枠の情報はここから辿る事で参照できるでしょう。
 
-= Details =
+細かい仕様については、ロードマップに載っていない RFC を参照している場合もあります。仕様を網羅的に調べたい場合は、IETF の RFC データーベースにアクセスしてください。キーワード "LDAP" で検索し、obsolete になっていないものが有効な RFC です。
 
-Add your content here.  Format your content with:
-  * Text in *bold* or _italic_
-  * Headings, paragraphs, and lists
-  * Automatic links to other wiki pages
+入り口としては、Rubyist Magazine の記事 "ActiveLdap を使ってみよう（前編）- LDAP とは" をお勧めします。
+
+=== スキーマをどうやって作りますか？ ===
