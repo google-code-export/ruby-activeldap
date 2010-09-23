@@ -1,4 +1,4 @@
-<wiki:toc max_depth="3" />
+<wiki:toc min_depth="2" max_depth="3" />
 
 = Introduction =
 
@@ -24,6 +24,8 @@ LDAP エントリからの情報取得や更新などをせずに認証のみ行
 
 もし万を超える単位の LDAP エントリを !ActiveLdap のオブジェクトとして扱いたいと言う事であれば、おそらくはアプリケーションの設計を見直した方がよいでしょう。
 
+== どうすれば開発に参加できますか？ ==
+
 = LDAP について =
 
 == 情報源はありますか？ ==
@@ -32,5 +34,10 @@ LDAP エントリからの情報取得や更新などをせずに認証のみ行
 細かい仕様については、ロードマップに載っていない RFC を参照している場合もあります。仕様を網羅的に調べたい場合は、IETF の RFC データーベースにアクセスしてください。キーワード "LDAP" で検索し、obsolete になっていないものが有効な RFC です。
 
 入り口としては、Rubyist Magazine の記事 "!ActiveLdap を使ってみよう（前編）- LDAP とは" をお勧めします。
+（openldap のドキュメントも入れるか確認中）
 
 == スキーマをどうやって作りますか？ ==
+
+!OpenLDAP であれば、通常は /etc/openldap/schemas ディレクトリ以下にスキーマ定義があります。
+
+!OpenLDAP におけるスキーマの作り方は !OpenLDAP の [http://www.openldap.org/doc/admin24/ Administrator's Guide] の 13.Schema Specification をご参照ください（参照先は OpenLDAP 2.4 のドキュメントです）。必要に応じ、RFC も役立つことでしょう。
