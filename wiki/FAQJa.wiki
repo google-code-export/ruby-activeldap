@@ -1,4 +1,4 @@
-<wiki:toc min_depth="2" max_depth="3" />
+<wiki:toc max_depth="3" />
 
 = Introduction =
 
@@ -10,7 +10,7 @@ LDAP エントリからの情報取得や更新などをせずに認証のみ行
 
 !ActiveLdap が特に有効なのは、Rails と連携する時や、LDAP エントリにビジネスロジックを持たせたい場合でしょう。ActiveRecord 由来のコールバックやバリデーションが備わっており、エラーハンドリングも比較的容易です。
 
-== ActiveDirectory に利用できますか？ ==
+== !ActiveDirectory に利用できますか？ ==
 はい。利用できます。
 
 == Ruby 1.9 に対応していますか？ ==
