@@ -2,15 +2,13 @@
 
 = Introduction =
 
-（建設中）
-
-ActiveLdap に関する FAQ です。ここに記載の無い質問はメーリングリストで質問してください。
+!ActiveLdap に関する FAQ です。ここに記載の無い質問はメーリングリストで質問してください。
 
 = !ActiveLdap について =
 == どういう場合に !ActiveLdap を利用すべきですか？ ==
 LDAP エントリからの情報取得や更新などをせず、認証のみを行いたい場合は、Ruby/LDAP や Net::LDAP で十分な場合がもあるでしょう。その他の場合は、ActiveLdap が有効な場合が多いと思います。
 
-!ActiveLdap が特に有効なのは、Rails と連携したい場合・LDAP エントリにビジネスロジックを持たせたい場合です。ActiveRecord 由来のコールバックやバリデーションが備わっており、エラーハンドリングも容易なものとなるでしょう。
+!ActiveLdap が特に有効なのは、Rails と連携したい場合・LDAP エントリにビジネスロジックを持たせたい場合です。!ActiveRecord 由来のコールバックやバリデーションが備わっており、エラーハンドリングも容易なものとなるでしょう。
 
 == !ActiveDirectory に利用できますか？ ==
 はい。利用できます。以下の資料も参考になるかと思います。
@@ -30,8 +28,23 @@ LDAP エントリからの情報取得や更新などをせず、認証のみを
 
 = バグ報告・開発やサポートについて =
 
-== バグの報告について ==
+== バグの報告と修正について ==
+バグと思われるものを発見したら、先ずは最新バージョンを利用してみてください。また、[http://code.google.com/p/ruby-activeldap/issues/list Issues] を確認してください。既に報告されているバグかもしれません。
+
+最新版を利用しても解決せず、また [http://code.google.com/p/ruby-activeldap/issues/list Issues] にも登録が無い場合は新しいバグとして [http://code.google.com/p/ruby-activeldap/issues/list Issues] に登録してください。
+
+この際、問題の共有と原因の特定のために、可能な限り以下の情報を一緒に投稿してください。
+  * OS の種類とそのバージョン
+  * 利用している LDAP サーバの製品名とそのバージョン
+  * Ruby のバージョン
+  * 利用している ActiveLdap のバージョン
+  * 再現のためのコードとデータ
+
+また、修正方法が明確な場合、パッチを一緒に投稿してくれるとより早く反映できるでしょうし、テストコードを含めてもらえれば更に早く対応できるでしょう。
+
 == 開発に参加するには？ ==
+先ずはバグの報告やパッチの投稿、[http://code.google.com/p/ruby-activeldap/issues/list Issues] を解決するためのコードやテストの投稿をしてください。必要と判断できればコミット権をお渡しします。
+
 == サポートについて ==
 メーリングリストで質問してみてください。有志の方が回答してくれるかもしれません。
 
@@ -45,7 +58,6 @@ LDAP エントリからの情報取得や更新などをせず、認証のみを
 入り口としては、Rubyist Magazine の記事 "!ActiveLdap を使ってみよう（前編）- LDAP とは" をお勧めします。
 
 == スキーマをどうやって作りますか？ ==
-
-OpenLDAP であれば、通常は /etc/openldap/schemas ディレクトリ以下にスキーマ定義があります。
+OpenLDAP であれば、 /etc/openldap/schemas ディレクトリ以下などにスキーマ定義を記述したファイルが配置されています。
 
 OpenLDAP におけるスキーマの作り方は OpenLDAP の [http://www.openldap.org/doc/admin24/ Administrator's Guide] の 13.Schema Specification をご参照ください（参照先は OpenLDAP 2.4 のドキュメントです）。必要に応じ、RFC も役立つことでしょう。
