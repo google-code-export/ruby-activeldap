@@ -2,6 +2,7 @@
 
 = Introduction =
 
+(建設中)
 !ActiveLdap に関する FAQ です。ここに記載の無い質問はメーリングリストで質問してください。
 
 = !ActiveLdap について =
@@ -48,6 +49,11 @@ LDAP エントリからの情報取得や更新などをせず、認証のみを
 == サポートについて ==
 メーリングリストで質問してみてください。有志の方が回答してくれるかもしれません。
 
+ * 日本語ＭＬ
+   * [ruby-activeldap-discuss-ja http://rubyforge.org/mailman/listinfo/ruby-activeldap-discuss-ja]
+ * 英語ＭＬ
+   * [ruby-activeldap-discuss http://rubyforge.org/mailman/listinfo/ruby-activeldap-discuss]
+
 = LDAP について =
 
 == 情報源はありますか？ ==
@@ -55,7 +61,7 @@ LDAP エントリからの情報取得や更新などをせず、認証のみを
 
 細かい仕様については、ロードマップに載っていない RFC を参照している場合もあります。仕様を網羅的に調べたい場合は、IETF の RFC データーベースにアクセスしてください。キーワード "LDAP" で検索し、obsolete になっていないものが有効な RFC です。
 
-入り口としては、Rubyist Magazine の記事 "!ActiveLdap を使ってみよう（前編）- LDAP とは" をお勧めします。
+入り口としては、Rubyist Magazine の記事 [http://jp.rubyist.net/magazine/?0027-ActiveLdap#l4 "ActiveLdap を使ってみよう（前編）- LDAP とは"] をお勧めします。
 
 == スキーマをどうやって作りますか？ ==
 OpenLDAP であれば、 /etc/openldap/schemas ディレクトリ以下などにスキーマ定義を記述したファイルが配置されています。
