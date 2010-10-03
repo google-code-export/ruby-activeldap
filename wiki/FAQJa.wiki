@@ -49,10 +49,10 @@ LDAP エントリからの情報取得や更新などをせず、認証のみを
 == サポートについて ==
 メーリングリストで質問してみてください。有志の方が回答してくれるかもしれません。
 
- * 日本語ＭＬ
-   * [ruby-activeldap-discuss-ja http://rubyforge.org/mailman/listinfo/ruby-activeldap-discuss-ja]
- * 英語ＭＬ
-   * [ruby-activeldap-discuss http://rubyforge.org/mailman/listinfo/ruby-activeldap-discuss]
+  * [ruby-activeldap-discuss-ja http://rubyforge.org/mailman/listinfo/ruby-activeldap-discuss-ja 日本語メーリングリスト]
+  * [ruby-activeldap-discuss http://rubyforge.org/mailman/listinfo/ruby-activeldap-discuss 英語メーリングリスト]
+
+※英語のＭＬのほうが活発です
 
 = LDAP について =
 
