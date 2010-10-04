@@ -2,7 +2,6 @@
 
 = Introduction =
 
-(建設中)
 !ActiveLdap に関する FAQ です。ここに記載の無い質問はメーリングリストで質問してください。
 
 = !ActiveLdap について =
